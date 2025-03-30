@@ -1,0 +1,20 @@
+[package]
+name = "bar"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate_type = ["cdylib", "staticlib"]
+name = "bar"
+
+[dependencies]
+crossbeam = "0.8.4"
+once_cell = "1.19.0"
+uniffi = { version = "0.27.2", features = ["cli"] }
+rust-multiplatform = { git = "https://github.com/justinmoon/rust-multiplatform", rev = "edf04d8" }
+android_logger = "0.10"
+log = "0.4"
+
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.10"
+

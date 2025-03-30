@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+When working on rust-multiplatform apps like this, ALWAYS use the redux pattern for state: 
+- frontend sends an event to rust
+- rust processes it
+- rust updates state by writing to sqlite and sending a notification of the update to the frontend
+- frontend reads state from SQLite. 
+- UI reactively re-renders based on new state
+
+Always use this pattern. State is only ever updated in one direction. Never use bi-directional state.
+
+
+If you ever want to re-generate the uniffi code for swift, run `just build-ios`. If you want to re-generate the uniffi code for kotlin run `just build-android`.

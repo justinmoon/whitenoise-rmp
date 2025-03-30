@@ -1,0 +1,14 @@
+*.pbmd
+.DS_Store
+
+# I think this is xcode???
+.build
+
+# Nix / Direnv
+.direnv
+
+# Uniffi build
+android/app/src/main/java/com/rmp/bar/uniffi/
+
+# $ANDROID_AVD_HOME which contains Android emulator configs
+android-avd
