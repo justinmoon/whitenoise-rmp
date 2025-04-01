@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         host:
-        - macos-x86_64
         - macos-aarch64
         - linux
         include:
