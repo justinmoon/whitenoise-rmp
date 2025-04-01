@@ -13,6 +13,10 @@ fn test_model_creation() {
 
 #[test]
 fn test_action_handling() {
+    // Create a channel for the view model so updates don't fail
+    let (sender, _receiver) = unbounded();
+    ViewModel::init(sender);
+
     // Create an RmpModel instance
     let model = RmpModel::new("test_dir".to_string());
 
@@ -38,11 +42,13 @@ fn test_view_model() {
     ViewModel::model_update(ModelUpdate::CountChanged { count: 42 });
 
     // Verify the update was sent
-    if let Ok(update) = receiver.try_recv() {
+    // Use recv() instead of try_recv() to block until a message is received
+    // With a reasonable timeout to prevent hanging
+    if let Ok(update) = receiver.recv_timeout(std::time::Duration::from_millis(100)) {
         match update {
             ModelUpdate::CountChanged { count } => assert_eq!(count, 42),
         }
     } else {
-        panic!("No update received");
+        panic!("No update received within timeout");
     }
 }
