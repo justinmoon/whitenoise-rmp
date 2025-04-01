@@ -34,7 +34,7 @@ fn test_action_handling() {
 fn test_view_model() {
     use std::sync::Once;
     static INIT: Once = Once::new();
-    
+
     // Create a channel for the view model
     let (sender, receiver) = unbounded();
 
@@ -46,7 +46,9 @@ fn test_view_model() {
 
     // Direct test without relying on static ViewModel
     // Send directly on the channel to verify it works
-    sender.send(ModelUpdate::CountChanged { count: 42 }).expect("Failed to send");
+    sender
+        .send(ModelUpdate::CountChanged { count: 42 })
+        .expect("Failed to send");
 
     // Verify the update was sent
     // Use recv() instead of try_recv() to block until a message is received

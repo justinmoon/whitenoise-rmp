@@ -111,15 +111,15 @@
                 src = buildSrc;
               }
             );
-            
+
             # Build the workspace dependencies
-            workspaceDeps = craneLib.buildDepsOnly {};
-            
+            workspaceDeps = craneLib.buildDepsOnly { };
+
             # Build the main package
             workspaceBuild = craneLib.buildPackage {
               cargoArtifacts = workspaceDeps;
             };
-            
+
             # Setup the test configuration
             rustUnitTests = craneLib.cargoNextest {
               cargoArtifacts = workspaceBuild;
