@@ -60,13 +60,13 @@
         buildPaths = [
           "Cargo.toml"
           "Cargo.lock"
-          "src"
+          "rust/src"
         ];
 
         buildSrc = flakeboxLib.filterSubPaths {
           root = builtins.path {
             name = projectName;
-            path = ./rust;
+            path = ./.;
           };
           paths = buildPaths;
         };
@@ -105,6 +105,7 @@
             craneLib = (
               craneLib'.overrideArgs {
                 pname = projectName;
+                version = "0.1.0";
                 src = buildSrc;
               }
             );
