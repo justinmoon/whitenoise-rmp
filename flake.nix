@@ -54,6 +54,32 @@
           config = {
             typos.pre-commit.enable = false;
             semgrep.enable = false;
+            # Add GitHub CI configuration here
+            github.ci = {
+              # Ensure CI is enabled
+              enable = true;
+
+              # Configure the build matrix
+              buildMatrix = {
+                host = [
+                  "macos-x86_64"
+                  "macos-aarch64"
+                  "linux"
+                ];
+                include = [
+                  {
+                    host = "linux";
+                    runs-on = "ubuntu-latest";
+                    timeout = 60;
+                  }
+                  {
+                    host = "macos-aarch64";
+                    runs-on = "macos-14";
+                    timeout = 60;
+                  }
+                ];
+              };
+            };
           };
         };
 
