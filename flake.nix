@@ -53,20 +53,20 @@
         flakeboxLib = flakebox.lib.${system} {
           config = {
             typos.pre-commit.enable = false;
+            semgrep.enable = false;
           };
         };
 
         buildPaths = [
           "Cargo.toml"
           "Cargo.lock"
-          ".cargo"
-          "rust/src"
+          "src"
         ];
 
         buildSrc = flakeboxLib.filterSubPaths {
           root = builtins.path {
             name = projectName;
-            path = ./.;
+            path = ./rust;
           };
           paths = buildPaths;
         };
