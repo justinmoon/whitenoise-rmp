@@ -60,6 +60,7 @@
         buildPaths = [
           "Cargo.toml"
           "Cargo.lock"
+          "rust/Cargo.toml"
           "rust/src"
         ];
 
@@ -110,15 +111,31 @@
                 src = buildSrc;
               }
             );
+            
+            # Build the workspace dependencies
+            workspaceDeps = craneLib.buildDepsOnly {};
+            
+            # Build the main package
+            workspaceBuild = craneLib.buildPackage {
+              cargoArtifacts = workspaceDeps;
+            };
+            
+            # Setup the test configuration
+            rustUnitTests = craneLib.cargoNextest {
+              cargoArtifacts = workspaceBuild;
+              cargoExtraArgs = "--workspace --all-targets --locked";
+            };
           in
           {
-            package = craneLib.buildPackage { };
+            package = workspaceBuild;
+            inherit rustUnitTests;
           }
         );
 
       in
       {
         packages.default = multiBuild.package;
+        packages.rustUnitTests = multiBuild.rustUnitTests;
         legacyPackages = multiBuild;
 
         # Using flakeboxLib.mkShells directly
