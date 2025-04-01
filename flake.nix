@@ -84,8 +84,9 @@
 
         # Create a toolchain following the example from rostra
         toolchainArgs = {
-          channel = "stable"; # Use stable Rust
+          channel = "stable";
           components = [
+            "cargo"
             "rust-src"
             "clippy"
             "rustfmt"
