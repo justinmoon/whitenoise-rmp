@@ -39,16 +39,16 @@ jobs:
         
     # Use the optimized flakebox pipeline
     - name: Build Dependencies
-      run: 'nix build .#packages.workspaceDeps -L'
+      run: 'nix build .#workspaceDeps -L'
       
     - name: Build Workspace
-      run: 'nix build .#packages.default -L'
+      run: 'nix build .#default -L'
       
     - name: Run Lints
       run: 'nix develop --ignore-environment .#lint --command ./scripts/pre-commit.sh'
       
     - name: Run Rust Unittests
-      run: 'nix build .#packages.rustUnitTests -L'
+      run: 'nix build .#rustUnitTests -L'
 
 name: CI
 'on':
