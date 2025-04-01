@@ -53,6 +53,7 @@
         flakeboxLib = flakebox.lib.${system} {
           config = {
             typos.pre-commit.enable = false;
+            semgrep.enable = false;
           };
         };
 
