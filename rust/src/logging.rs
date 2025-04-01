@@ -3,8 +3,6 @@
 //! This module provides platform-specific logging initialization for different
 //! platforms (iOS/macOS, Android, and others)
 
-use log::LevelFilter;
-
 /// Initialize logging based on the current platform.
 /// This function should be called early in your app lifecycle.
 pub fn init_logging() {

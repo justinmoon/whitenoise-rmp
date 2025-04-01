@@ -1,4 +1,6 @@
 mod logging;
+
+#[cfg(test)]
 mod tests;
 
 use crossbeam::channel::{unbounded, Receiver, Sender};
@@ -74,5 +76,5 @@ impl RmpModel {
     }
 }
 
-/// Generate RmpModel and RmpViewModel from these
+// Generate RmpModel and RmpViewModel from these
 rust_multiplatform::register_app!(Model, ViewModel, Action, ModelUpdate);

@@ -1,15 +1,17 @@
 jobs:
-  build:
-    name: Build
-    runs-on: ${{ matrix.runs-on }}
+  flake:
+    name: Flake self-check
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@v4
-    - name: Magic Nix Cache
-      uses: DeterminateSystems/magic-nix-cache-action@v2
-    - name: Build on ${{ matrix.host }}
-      run: 'nix flake check -L .#'
+    - name: Check Nix flake inputs
+      uses: DeterminateSystems/flake-checker-action@v5
+      with:
+        fail-mode: true
+
+  rust-pipeline:
+    name: Rust Pipeline
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
         host:
@@ -23,18 +25,6 @@ jobs:
           runs-on: macos-14
           timeout: 60
     timeout-minutes: ${{ matrix.timeout }}
-  flake:
-    name: Flake self-check
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Check Nix flake inputs
-      uses: DeterminateSystems/flake-checker-action@v5
-      with:
-        fail-mode: true
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Install Nix
@@ -44,26 +34,21 @@ jobs:
     - name: Cargo Cache
       uses: actions/cache@v3
       with:
-        key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+        key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
         path: ~/.cargo
-    - name: Commit Check
+        
+    # Use the optimized flakebox pipeline
+    - name: Build Dependencies
+      run: 'nix build .#packages.workspaceDeps -L'
+      
+    - name: Build Workspace
+      run: 'nix build .#packages.default -L'
+      
+    - name: Run Lints
       run: 'nix develop --ignore-environment .#lint --command ./scripts/pre-commit.sh'
-  test:
-    name: Rust Tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@v4
-    - name: Magic Nix Cache
-      uses: DeterminateSystems/magic-nix-cache-action@v2
-    - name: Cargo Cache
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
-        path: ~/.cargo
-    - name: Run Rust Tests
-      run: 'nix build .#rustUnitTests -L'
+      
+    - name: Run Rust Unittests
+      run: 'nix build .#packages.rustUnitTests -L'
 
 name: CI
 'on':

@@ -6,6 +6,7 @@
 
 # Nix / Direnv
 .direnv
+/result
 
 # Uniffi build
 android/app/src/main/java/com/rmp/bar/uniffi/

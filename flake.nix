@@ -128,7 +128,7 @@
           in
           {
             package = workspaceBuild;
-            inherit rustUnitTests;
+            inherit workspaceDeps rustUnitTests;
           }
         );
 
@@ -136,6 +136,7 @@
       {
         packages.default = multiBuild.package;
         packages.rustUnitTests = multiBuild.rustUnitTests;
+        packages.workspaceDeps = multiBuild.workspaceDeps;
         legacyPackages = multiBuild;
 
         # Using flakeboxLib.mkShells directly
