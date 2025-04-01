@@ -48,6 +48,22 @@ jobs:
         path: ~/.cargo
     - name: Commit Check
       run: 'nix develop --ignore-environment .#lint --command ./scripts/pre-commit.sh'
+  test:
+    name: Rust Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Nix
+      uses: DeterminateSystems/nix-installer-action@v4
+    - name: Magic Nix Cache
+      uses: DeterminateSystems/magic-nix-cache-action@v2
+    - name: Cargo Cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+        path: ~/.cargo
+    - name: Run Rust Tests
+      run: 'nix build .#rustUnitTests -L'
 
 name: CI
 'on':
