@@ -60,14 +60,13 @@
         buildPaths = [
           "Cargo.toml"
           "Cargo.lock"
-          ".cargo"
-          "rust/src"
+          "src"
         ];
 
         buildSrc = flakeboxLib.filterSubPaths {
           root = builtins.path {
             name = projectName;
-            path = ./.;
+            path = ./rust;
           };
           paths = buildPaths;
         };
