@@ -37,3 +37,9 @@ clean:
     cargo clean
     cd ..
     rm -rf android/.gradle
+
+# Auto-format rust and nix files (Kotlin soon, too!)
+format:
+    cargo fmt --all
+    nixfmt $(git ls-files | grep "\.nix$")
+
