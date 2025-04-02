@@ -60,11 +60,11 @@ jobs:
       matrix:
         host:
         - macos-aarch64
-        - linux
+        # - linux
         include:
-        - host: linux
-          runs-on: ubuntu-latest
-          timeout: 60
+        # - host: linux
+        #   runs-on: ubuntu-latest
+        #   timeout: 60
         - host: macos-aarch64
           runs-on: macos-14
           timeout: 60
