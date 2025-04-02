@@ -9,5 +9,5 @@ futures = "0.3"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
 reqwest = "0.11"
-appium-client = { path = "/Users/justin/code/appium-client" }
+appium-client = "0.2.2"
 anyhow = "1.0"
