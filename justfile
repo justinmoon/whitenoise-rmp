@@ -9,9 +9,16 @@ run-emulator:
 build-android:
     bash scripts/build-android.sh
 
+install-apk:
+    bash scripts/install-apk.sh
+
 # Run the android app
 run-android: build-android
     bash scripts/run-android.sh
+
+# Run E2E tests with Appium (assumes app is built and emulator is running)
+ui-tests:
+    bash scripts/run-ui-tests.sh
 
 # Lint all source files
 lint:

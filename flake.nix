@@ -137,6 +137,13 @@
         packages.default = multiBuild.package;
         packages.rustUnitTests = multiBuild.rustUnitTests;
         packages.workspaceDeps = multiBuild.workspaceDeps;
+
+        # E2E test command that runs the Appium tests
+        packages.e2eTests = pkgs.writeShellScriptBin "run-e2e-tests" ''
+          cd $PWD
+          bash scripts/run-e2e-tests.sh
+        '';
+
         legacyPackages = multiBuild;
 
         # Using flakeboxLib.mkShells directly
@@ -150,6 +157,7 @@
             pkgs.jdk17
             pkgs.just
             pkgs.watchexec
+            pkgs.bun
             pkgs.cargo-ndk
           ];
 
