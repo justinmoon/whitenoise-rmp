@@ -11,10 +11,6 @@ if ! adb devices | grep "emulator" | grep -q "device"; then
     exit 1
 fi
 
-# Install the app
-echo "Installing app..."
-bash scripts/install-apk.sh
-
 # Check if bun is installed
 if ! command -v bun &> /dev/null; then
     echo "Bun is not installed. Make sure to use Nix develop."

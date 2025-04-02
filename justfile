@@ -5,20 +5,25 @@ default:
 run-emulator:
     bash scripts/run-emulator.sh
 
-# Cross-compile rust code for Android
-build-android:
-    bash scripts/build-android.sh
+# Cross-compile rust uniffi code for Android
+cross-android: 
+    bash scripts/cross-android.sh
 
-install-apk:
-    bash scripts/install-apk.sh
+# Install Android APK
+build-apk: cross-android
+    bash scripts/build-apk.sh
+
+# Install Android APK
+install-apk: build-apk
+    adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 
 # Run the android app
-run-android: build-android
+run-android: install-apk
     bash scripts/run-android.sh
 
 # Run E2E tests with Appium (assumes app is built and emulator is running)
-ui-tests:
-    bash scripts/run-ui-tests.sh
+ui-tests: install-apk
+    bash scripts/ui-tests.sh
 
 # Lint all source files
 lint:
