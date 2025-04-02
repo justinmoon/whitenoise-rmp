@@ -2,11 +2,11 @@
   description = "rust-multiplatform development environment";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
 
     flakebox = {
-      url = "github:rustshop/flakebox";
+      url = "github:justinmoon/flakebox?rev=f26ac873cfce2596b7c40b8581f0f9d193af967a";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
