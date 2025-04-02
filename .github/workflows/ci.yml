@@ -38,6 +38,8 @@ jobs:
         path: ~/.cargo
 
     - name: Print nix version
+      run: 'nix develop'
+    - name: Print nix version
       run: 'nix --version'
         
     - name: Test dev shell
