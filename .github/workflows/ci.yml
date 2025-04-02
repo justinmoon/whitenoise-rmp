@@ -29,13 +29,13 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@v4
-    - name: Magic Nix Cache
-      uses: DeterminateSystems/magic-nix-cache-action@v2
-    - name: Cargo Cache
-      uses: actions/cache@v3
-      with:
-        key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
-        path: ~/.cargo
+    # - name: Magic Nix Cache
+    #   uses: DeterminateSystems/magic-nix-cache-action@v2
+    # - name: Cargo Cache
+    #   uses: actions/cache@v3
+    #   with:
+    #     key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
+    #     path: ~/.cargo
 
     - name: Print nix version
       run: 'nix develop'
