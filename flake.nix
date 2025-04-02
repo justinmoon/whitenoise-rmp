@@ -129,11 +129,6 @@
         packages.default = multiBuild.package;
         packages.rustUnitTests = multiBuild.rustUnitTests;
         packages.workspaceDeps = multiBuild.workspaceDeps;
-        packages.e2eTests = pkgs.writeShellScriptBin "run-e2e-tests" ''
-          cd $PWD
-          bash scripts/e2e-tests.sh
-        '';
-
         legacyPackages = multiBuild;
 
         devShells = flakeboxLib.mkShells {
