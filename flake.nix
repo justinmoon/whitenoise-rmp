@@ -29,27 +29,19 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        # Configure Android SDK
         androidSdk = android-nixpkgs.sdk.${system} (
           sdkPkgs: with sdkPkgs; [
-            # Essential build tools
             cmdline-tools-latest
             build-tools-35-0-0
             platform-tools
-
-            # Platform & API level
             platforms-android-35
-
-            # NDK for native code compilation
             ndk-28-0-13004108
-
-            # Emulator for testing
             emulator
             system-images-android-35-google-apis-arm64-v8a
           ]
         );
 
-        projectName = "foo";
+        projectName = "bar";
         flakeboxLib = flakebox.lib.${system} {
           config = {
             typos.pre-commit.enable = false;
@@ -137,21 +129,16 @@
         packages.default = multiBuild.package;
         packages.rustUnitTests = multiBuild.rustUnitTests;
         packages.workspaceDeps = multiBuild.workspaceDeps;
-
-        # E2E test command that runs the Appium tests
         packages.e2eTests = pkgs.writeShellScriptBin "run-e2e-tests" ''
           cd $PWD
-          bash scripts/run-e2e-tests.sh
+          bash scripts/e2e-tests.sh
         '';
 
         legacyPackages = multiBuild;
 
-        # Using flakeboxLib.mkShells directly
         devShells = flakeboxLib.mkShells {
-          # Use the single toolchain
           inherit toolchain;
 
-          # Include your existing packages
           packages = [
             androidSdk
             pkgs.jdk17
