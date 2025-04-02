@@ -37,6 +37,9 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
         path: ~/.cargo
         
+    - name: Test dev shell
+      run: 'nix develop'
+
     # Use the optimized flakebox pipeline
     - name: Build Dependencies
       run: 'nix build .#workspaceDeps -L'
