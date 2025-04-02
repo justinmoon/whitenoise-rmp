@@ -105,17 +105,24 @@
             );
 
             # Build the workspace dependencies
-            workspaceDeps = craneLib.buildDepsOnly { };
+            workspaceDeps = craneLib.buildDepsOnly {
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
+            };
 
             # Build the main package
             workspaceBuild = craneLib.buildPackage {
               cargoArtifacts = workspaceDeps;
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
             };
 
             # Setup the test configuration
             rustUnitTests = craneLib.cargoNextest {
               cargoArtifacts = workspaceBuild;
               cargoExtraArgs = "--workspace --all-targets --locked";
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
             };
           in
           {
