@@ -150,6 +150,7 @@
             pkgs.jdk17
             pkgs.just
             pkgs.watchexec
+            pkgs.cargo-ndk
           ];
 
           # Preserve your shellHook

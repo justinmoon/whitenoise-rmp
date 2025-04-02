@@ -17,7 +17,7 @@ cargo ndk -o ../android/app/src/main/jniLibs \
 
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
-    --library ./target/debug/libbar.dylib \
+    --library ../target/debug/libbar.dylib \
     --language kotlin \
     --out-dir ../android/app/src/main/java/com/rmp/bar
 
