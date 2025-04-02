@@ -54,6 +54,8 @@
           "Cargo.lock"
           "rust/Cargo.toml"
           "rust/src"
+          "ui-tests/Cargo.toml"
+          "ui-tests/src"
         ];
 
         buildSrc = flakeboxLib.filterSubPaths {
