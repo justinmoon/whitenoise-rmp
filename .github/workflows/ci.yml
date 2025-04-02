@@ -38,9 +38,11 @@ jobs:
     #     path: ~/.cargo
 
     - name: Print nix version
-      run: 'nix develop'
-    - name: Print nix version
       run: 'nix --version'
+    - name: Fetch subs
+      run: 'nix config show | grep substituters'
+    - name: Run nix develop
+      run: 'nix develop'
         
     - name: Test dev shell
       run: 'nix develop'
