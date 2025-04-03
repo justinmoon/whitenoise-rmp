@@ -39,8 +39,8 @@
             emulator
             # Use the appropriate system image
             (if pkgs.stdenv.isDarwin 
-              then system-images-android-35-google-apis-arm64-v8a
-              else system-images-android-35-google-apis-x86_64)
+              then sdkPkgs."system-images-android-35-google-apis-arm64-v8a"
+              else sdkPkgs."system-images-android-35-google-apis-x86_64")
           ]
         );
 
