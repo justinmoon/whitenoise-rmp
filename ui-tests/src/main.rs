@@ -10,10 +10,9 @@ use std::time::Duration;
 async fn main() -> Result<()> {
     // Configure capabilities for the Android app
     let mut capabilities = AndroidCapabilities::new();
-    
+
     // Require APK_PATH environment variable
-    let apk_path = std::env::var("APK_PATH")
-        .expect("APK_PATH environment variable must be set");
+    let apk_path = std::env::var("APK_PATH").expect("APK_PATH environment variable must be set");
     capabilities.app(&apk_path);
 
     // Set required capabilities for Appium
