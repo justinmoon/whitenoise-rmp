@@ -5,10 +5,20 @@ cd rust
 # Build the Android libraries in jniLibs
 # armeabi-v7a needed by xiaomi a3
 # arm64-v8a needed by pixel 3a emulator
-        # -t armeabi-v7a \
+# x86_64 needed for Linux emulators
+
+# Determine target architecture based on OS
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    TARGET_ARCH="x86_64"
+else
+    TARGET_ARCH="arm64-v8a"
+fi
+
+echo "Building for target architecture: $TARGET_ARCH"
+
 cargo ndk -o ../android/app/src/main/jniLibs \
         --manifest-path ./Cargo.toml \
-        -t arm64-v8a \
+        -t $TARGET_ARCH \
         build --release
 
 ls ../android/app/src/main
