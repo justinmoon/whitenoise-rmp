@@ -167,6 +167,7 @@
 
             export ANDROID_HOME=${androidSdk}/share/android-sdk
             export ANDROID_SDK_ROOT=${androidSdk}/share/android-sdk
+            export ANDROID_NDK_HOME=${androidSdk}/share/android-sdk/ndk/28.0.13004108
             export ANDROID_NDK_ROOT=${androidSdk}/share/android-sdk/ndk/28.0.13004108
             # this will work with the `just create-emulator` command, but probably a better way to do this ...
             export ANDROID_AVD_HOME=$PWD/android-avd
