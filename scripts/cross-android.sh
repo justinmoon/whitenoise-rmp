@@ -2,10 +2,6 @@
 set -ex
 cd rust
 
-# Build the dylib for local use
-# FIXME: add debug / release flag
-cargo build
-
 # Build the Android libraries in jniLibs
 # armeabi-v7a needed by xiaomi a3
 # arm64-v8a needed by pixel 3a emulator
@@ -28,9 +24,12 @@ else
     exit 1
 fi
 
+# testing out the libbar.so from android ...
+# --library ../target/debug/libbar.$LIB_EXT \
+
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
-    --library ../target/debug/libbar.$LIB_EXT \
+    --library ../target/aarch64-linux-android/release/libbar.so \
     --language kotlin \
     --out-dir ../android/app/src/main/java/com/rmp/bar
 
