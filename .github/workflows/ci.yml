@@ -20,7 +20,8 @@ jobs:
         - linux
         include:
         - host: linux
-          runs-on: ubuntu-latest
+          # runs-on: ubuntu-latest
+          runs-on: buildjet-8vcpu-ubuntu-2204
           timeout: 60
         # - host: macos-aarch64
         #   runs-on: macos-14
