@@ -47,6 +47,13 @@ lint-fix:
 adb-home:
     adb shell input keyevent 3
 
+# Kill all running Android emulator instances
+kill-emulator:
+    @echo "Killing all running emulator instances..."
+    @adb devices | grep emulator | cut -f1 | xargs -I{} adb -s {} emu kill || true
+    @pkill -f "emulator -avd" || true
+    @echo "All emulator instances terminated"
+
 # Delete all build artifacts and revert to basically fresh git checkout
 clean:
     cd rust
