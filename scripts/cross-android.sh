@@ -15,6 +15,9 @@ cargo ndk -o ../android/app/src/main/jniLibs \
         -t arm64-v8a \
         build --release
 
+ls target
+ls ../target
+
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
     --library ../target/debug/libbar.dylib \
