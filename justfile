@@ -1,9 +1,13 @@
 default:
     just --list
 
-# Opens the android emulator (installs one on first run)
+# Opens the android emulator with GUI (installs one on first run)
 run-emulator:
     bash scripts/run-emulator.sh
+
+# Opens the android emulator headless (for CI/testing)
+run-emulator-headless:
+    bash scripts/run-emulator.sh --headless
 
 # Cross-compile rust uniffi code for Android
 cross-android: 
@@ -22,7 +26,7 @@ run-android: install-apk
     bash scripts/run-android.sh
 
 # Run E2E tests with Appium (assumes app is built and emulator is running)
-ui-tests: run-emulator install-apk
+ui-tests: run-emulator-headless install-apk
     bash scripts/ui-tests.sh
 
 # Lint all source files

@@ -2,6 +2,15 @@
 # Set log file path
 LOG_FILE="android-avd/emulator.log"
 
+# Parse command line arguments
+HEADLESS=false
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --headless) HEADLESS=true; shift ;;
+        *) echo "Unknown parameter: $1"; exit 1 ;;
+    esac
+done
+
 # Reset the log file
 > "$LOG_FILE"
 
@@ -16,7 +25,11 @@ START_TIME=$(date +%s)
 
 # Run the emulator in the background and redirect output to log file
 echo "Starting emulator..." | tee -a "$LOG_FILE"
-emulator -avd emulator -no-window >> "$LOG_FILE" 2>&1 &
+if [ "$HEADLESS" = true ]; then
+    emulator -avd emulator -no-window -read-only >> "$LOG_FILE" 2>&1 &
+else
+    emulator -avd emulator -read-only >> "$LOG_FILE" 2>&1 &
+fi
 EMULATOR_PID=$!
 
 # Wait for the emulator to boot completely
