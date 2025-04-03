@@ -17,6 +17,7 @@ cargo ndk -o ../android/app/src/main/jniLibs \
 
 ls target || true
 ls ../target || true
+tree ../target || true
 
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
