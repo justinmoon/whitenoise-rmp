@@ -27,6 +27,7 @@ if [ $? -eq 0 ]; then
     echo "Emulator started successfully" | tee -a "$LOG_FILE"
 else
     echo "Emulator startup timed out or failed" | tee -a "$LOG_FILE"
+    cat $LOG_FILE
     kill $EMULATOR_PID
     exit 1
 fi
