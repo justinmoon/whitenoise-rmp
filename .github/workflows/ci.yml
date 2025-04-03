@@ -67,40 +67,6 @@ jobs:
       if: matrix.host == 'macos-aarch64'
       run: 'nix develop -c just ui-tests'
 
-  # android-pipeline:
-  #   name: Android Pipeline
-  #   runs-on: ${{ matrix.runs-on }}
-  #   strategy:
-  #     matrix:
-  #       host:
-  #       - macos-aarch64
-  #       # - linux
-  #       include:
-  #       # - host: linux
-  #       #   runs-on: ubuntu-latest
-  #       #   timeout: 60
-  #       - host: macos-aarch64
-  #         runs-on: macos-14
-  #         timeout: 60
-  #   timeout-minutes: ${{ matrix.timeout }}
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Install Nix
-  #     uses: DeterminateSystems/nix-installer-action@v4
-  #   - name: Setup Cachix
-  #     uses: cachix/cachix-action@v12
-  #     with:
-  #       name: bar
-  #       authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-  #   # TODO: is that "cross-android" prefix on the key doing the right thing?
-  #   - name: Cargo Cache
-  #     uses: actions/cache@v3
-  #     with:
-  #       key: cross-android-${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
-  #       path: ~/.cargo
-  #   - name: Run E2E Tests
-  #     run: 'nix develop -c just ui-tests'
-
 name: CI
 'on':
   merge_group:
