@@ -11,6 +11,7 @@ jobs:
 
   rust-pipeline:
     name: Rust Pipeline
+    environment: "Github Actions"
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
