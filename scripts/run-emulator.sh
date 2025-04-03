@@ -18,7 +18,7 @@ EMULATOR_PID=$!
 
 # Wait for the emulator to boot completely
 echo "Waiting for emulator to start..." | tee -a "$LOG_FILE"
-timeout 60 bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do 
+timeout 180 bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do 
     echo "Still waiting for boot completion..." >> "'"$LOG_FILE"'"
     sleep 2
 done'
