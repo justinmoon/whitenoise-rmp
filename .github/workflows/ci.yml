@@ -63,9 +63,8 @@ jobs:
       run: 'nix build .#rustUnitTests -L'
 
     - name: Run E2E Tests
-      # arm emulator doesn't work on x86
-      # if: matrix.host == 'macos-aarch64'
-      # if: matrix.host == 'linux'
+      # github macos runner hits `HVF error: HV_UNSUPPORTED` error when starting the emulator
+      if: matrix.host == 'linux'
       run: 'nix develop -c just ui-tests'
 
 name: CI
