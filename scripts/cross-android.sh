@@ -11,6 +11,9 @@ cargo ndk -o ../android/app/src/main/jniLibs \
         -t arm64-v8a \
         build --release
 
+ls ../android/app/src/main
+ls ../android/app/src/main/jniLibs
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     LIB_EXT="dylib"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
