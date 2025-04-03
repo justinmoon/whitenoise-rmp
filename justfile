@@ -22,7 +22,7 @@ run-android: install-apk
     bash scripts/run-android.sh
 
 # Run E2E tests with Appium (assumes app is built and emulator is running)
-ui-tests: install-apk
+ui-tests: run-emulator install-apk
     bash scripts/ui-tests.sh
 
 # Lint all source files
