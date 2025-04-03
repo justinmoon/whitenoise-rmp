@@ -16,16 +16,16 @@ jobs:
     strategy:
       matrix:
         host:
-        # - macos-aarch64
+        - macos-aarch64
         - linux
         include:
         - host: linux
           # runs-on: ubuntu-latest
           runs-on: buildjet-8vcpu-ubuntu-2204
           timeout: 60
-        # - host: macos-aarch64
-        #   runs-on: macos-14
-        #   timeout: 60
+        - host: macos-aarch64
+          runs-on: macos-14
+          timeout: 60
     timeout-minutes: ${{ matrix.timeout }}
     steps:
     - uses: actions/checkout@v4
@@ -36,36 +36,35 @@ jobs:
       with:
         name: justinmoon
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    # - name: Cargo Cache
-    #   uses: actions/cache@v3
-    #   with:
-    #     key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
-    #     path: ~/.cargo
+    - name: Cargo Cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
+        path: ~/.cargo
 
-    - name: Print nix version
-      run: 'nix --version'
-    - name: Fetch subs
-      run: 'nix config show | grep substituters'
     - name: Run nix develop
-      run: 'nix develop'
-        
-    - name: Test dev shell
       run: 'nix develop'
 
     # Use the optimized flakebox pipeline
     - name: Build Dependencies
+      if: matrix.host == 'linux'
       run: 'nix build .#workspaceDeps -L'
       
     - name: Build Workspace
+      if: matrix.host == 'linux'
       run: 'nix build .#default -L'
       
     - name: Run Lints
+      if: matrix.host == 'linux'
       run: 'nix develop --ignore-environment .#lint --command ./scripts/pre-commit.sh'
       
     - name: Run Rust Unittests
+      if: matrix.host == 'linux'
       run: 'nix build .#rustUnitTests -L'
 
     - name: Run E2E Tests
+      # arm emulator doesn't work on x86
+      if: matrix.host == 'macos-aarch64'
       run: 'nix develop -c just ui-tests'
 
   # android-pipeline:
