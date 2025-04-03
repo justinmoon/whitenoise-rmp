@@ -19,9 +19,18 @@ ls target || true
 ls ../target || true
 tree ../target || true
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    LIB_EXT="dylib"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    LIB_EXT="so" 
+else
+    echo "Unsupported OS"
+    exit 1
+fi
+
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
-    --library ../target/debug/libbar.dylib \
+    --library ../target/debug/libbar.$LIB_EXT \
     --language kotlin \
     --out-dir ../android/app/src/main/java/com/rmp/bar
 
