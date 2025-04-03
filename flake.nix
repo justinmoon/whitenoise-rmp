@@ -156,6 +156,9 @@
             pkgs.watchexec
             pkgs.bun
             pkgs.cargo-ndk
+            # Add OpenSSL development packages
+            pkgs.openssl
+            pkgs.pkg-config
           ];
 
           # Preserve your shellHook
