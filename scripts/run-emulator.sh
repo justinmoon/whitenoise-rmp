@@ -11,6 +11,9 @@ if [ ! -d "$ANDROID_AVD_HOME/emulator.avd" ]; then
     bash scripts/create-emulator.sh 2>&1 | tee -a "$LOG_FILE"
 fi
 
+# Record start time
+START_TIME=$(date +%s)
+
 # Run the emulator in the background and redirect output to log file
 echo "Starting emulator..." | tee -a "$LOG_FILE"
 emulator -avd emulator -no-window >> "$LOG_FILE" 2>&1 &
@@ -24,10 +27,14 @@ timeout 180 bash -c 'until adb shell getprop sys.boot_completed 2>/dev/null | gr
 done'
 
 if [ $? -eq 0 ]; then
-    echo "Emulator started successfully" | tee -a "$LOG_FILE"
+    # Calculate elapsed time
+    END_TIME=$(date +%s)
+    ELAPSED_TIME=$((END_TIME - START_TIME))
+    echo "Emulator started successfully in ${ELAPSED_TIME} seconds" | tee -a "$LOG_FILE"
 else
-    echo "Emulator startup timed out or failed" | tee -a "$LOG_FILE"
+    echo "printing log file"
     cat $LOG_FILE
+    echo "Emulator startup timed out or failed" | tee -a "$LOG_FILE"
     kill $EMULATOR_PID
     exit 1
 fi
