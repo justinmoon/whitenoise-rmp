@@ -15,8 +15,8 @@ cargo ndk -o ../android/app/src/main/jniLibs \
         -t arm64-v8a \
         build --release
 
-ls target
-ls ../target
+ls target || true
+ls ../target || true
 
 # Create Kotlin bindings
 cargo run --bin uniffi-bindgen generate \
