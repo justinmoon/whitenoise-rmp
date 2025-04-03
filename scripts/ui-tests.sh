@@ -4,6 +4,14 @@ set -ex
 # Constants
 APPIUM_PORT=4723
 ANDROID_PACKAGE="com.rmp.bar"
+APK_PATH="$(pwd)/android/app/build/outputs/apk/debug/app-debug.apk"
+
+# Verify APK exists
+if [ ! -f "$APK_PATH" ]; then
+    echo "APK not found at $APK_PATH"
+    echo "Make sure to build the Android app first"
+    exit 1
+fi
 
 # Check if emulator is running
 if ! adb devices | grep "emulator" | grep -q "device"; then
@@ -40,7 +48,7 @@ fi
 # Run the E2E tests
 echo "Running E2E tests..."
 cd ui-tests
-cargo run
+APK_PATH="$APK_PATH" cargo run
 
 # Capture the exit code
 TEST_EXIT_CODE=$?

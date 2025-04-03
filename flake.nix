@@ -158,8 +158,7 @@
             pkgs.cargo-ndk
             # Add OpenSSL development packages
             pkgs.openssl
-            pkgs.pkg-config
-          ];
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.pkg-config ];
 
           # Preserve your shellHook
           shellHook = ''
