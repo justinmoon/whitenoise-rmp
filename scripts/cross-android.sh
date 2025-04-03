@@ -36,9 +36,15 @@ fi
 # testing out the libbar.so from android ...
 # --library ../target/debug/libbar.$LIB_EXT \
 
-# Create Kotlin bindings
+# Create Kotlin bindings with the correct target path
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    LIBRARY_PATH="../target/x86_64-linux-android/release/libbar.so"
+else
+    LIBRARY_PATH="../target/aarch64-linux-android/release/libbar.so"
+fi
+
 cargo run --bin uniffi-bindgen generate \
-    --library ../target/aarch64-linux-android/release/libbar.so \
+    --library $LIBRARY_PATH \
     --language kotlin \
     --out-dir ../android/app/src/main/java/com/rmp/bar
 
