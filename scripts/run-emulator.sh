@@ -27,8 +27,7 @@ START_TIME=$(date +%s)
 echo "Starting emulator..." | tee -a "$LOG_FILE"
 if [ "$HEADLESS" = true ]; then
     # -no-accel and -no-snapshot were to get this running in github actions
-    # emulator -avd emulator -no-window -read-only -no-accel -no-snapshot >> "$LOG_FILE" 2>&1 &
-    emulator -avd emulator -no-window -no-audio -read-only -no-accel -no-snapshot -no-boot-anim -gpu swiftshader_indirect -qemu -cpu cortex-a57 >> "$LOG_FILE" 2>&1 &
+    emulator -avd emulator -no-window -read-only -no-accel -no-snapshot >> "$LOG_FILE" 2>&1 &
 else
     emulator -avd emulator -read-only >> "$LOG_FILE" 2>&1 &
 fi

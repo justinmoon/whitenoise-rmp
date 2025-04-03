@@ -29,6 +29,11 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        # Select the appropriate system image based on platform
+        androidSystemImage = if pkgs.stdenv.isDarwin 
+                              then "system-images-android-35-google-apis-arm64-v8a"
+                              else "system-images-android-35-google-apis-x86_64";
+        
         androidSdk = android-nixpkgs.sdk.${system} (
           sdkPkgs: with sdkPkgs; [
             cmdline-tools-latest
@@ -37,7 +42,7 @@
             platforms-android-35
             ndk-28-0-13004108
             emulator
-            system-images-android-35-google-apis-arm64-v8a
+            (getAttr androidSystemImage sdkPkgs)
           ]
         );
 
