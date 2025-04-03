@@ -29,27 +29,25 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        # Configure Android SDK
         androidSdk = android-nixpkgs.sdk.${system} (
           sdkPkgs: with sdkPkgs; [
-            # Essential build tools
             cmdline-tools-latest
             build-tools-35-0-0
             platform-tools
-
-            # Platform & API level
             platforms-android-35
-
-            # NDK for native code compilation
             ndk-28-0-13004108
-
-            # Emulator for testing
             emulator
-            system-images-android-35-google-apis-arm64-v8a
+            # Use the appropriate system image
+            (
+              if pkgs.stdenv.isDarwin then
+                system-images-android-35-google-apis-arm64-v8a
+              else
+                system-images-android-35-google-apis-x86-64
+            )
           ]
         );
 
-        projectName = "foo";
+        projectName = "bar";
         flakeboxLib = flakebox.lib.${system} {
           config = {
             typos.pre-commit.enable = false;
@@ -62,6 +60,8 @@
           "Cargo.lock"
           "rust/Cargo.toml"
           "rust/src"
+          "ui-tests/Cargo.toml"
+          "ui-tests/src"
         ];
 
         buildSrc = flakeboxLib.filterSubPaths {
@@ -113,17 +113,24 @@
             );
 
             # Build the workspace dependencies
-            workspaceDeps = craneLib.buildDepsOnly { };
+            workspaceDeps = craneLib.buildDepsOnly {
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
+            };
 
             # Build the main package
             workspaceBuild = craneLib.buildPackage {
               cargoArtifacts = workspaceDeps;
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
             };
 
             # Setup the test configuration
             rustUnitTests = craneLib.cargoNextest {
               cargoArtifacts = workspaceBuild;
               cargoExtraArgs = "--workspace --all-targets --locked";
+              nativeBuildInputs = with pkgs; [ pkg-config ];
+              buildInputs = with pkgs; [ openssl ];
             };
           in
           {
@@ -139,19 +146,19 @@
         packages.workspaceDeps = multiBuild.workspaceDeps;
         legacyPackages = multiBuild;
 
-        # Using flakeboxLib.mkShells directly
         devShells = flakeboxLib.mkShells {
-          # Use the single toolchain
           inherit toolchain;
 
-          # Include your existing packages
           packages = [
             androidSdk
             pkgs.jdk17
             pkgs.just
             pkgs.watchexec
+            pkgs.bun
             pkgs.cargo-ndk
-          ];
+            # Add OpenSSL development packages
+            pkgs.openssl
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.pkg-config ];
 
           # Preserve your shellHook
           shellHook = ''
@@ -160,14 +167,13 @@
 
             export ANDROID_HOME=${androidSdk}/share/android-sdk
             export ANDROID_SDK_ROOT=${androidSdk}/share/android-sdk
+            export ANDROID_NDK_HOME=${androidSdk}/share/android-sdk/ndk/28.0.13004108
             export ANDROID_NDK_ROOT=${androidSdk}/share/android-sdk/ndk/28.0.13004108
             # this will work with the `just create-emulator` command, but probably a better way to do this ...
             export ANDROID_AVD_HOME=$PWD/android-avd
 
             export JAVA_HOME=${pkgs.jdk17.home}
             export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH
-
-            just --list
           '';
         };
       }

@@ -11,6 +11,7 @@ jobs:
 
   rust-pipeline:
     name: Rust Pipeline
+    environment: "Github Actions"
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
@@ -19,7 +20,8 @@ jobs:
         - linux
         include:
         - host: linux
-          runs-on: ubuntu-latest
+          # runs-on: ubuntu-latest
+          runs-on: buildjet-8vcpu-ubuntu-2204
           timeout: 60
         - host: macos-aarch64
           runs-on: macos-14
@@ -29,29 +31,41 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@v4
-    - name: Magic Nix Cache
-      uses: DeterminateSystems/magic-nix-cache-action@v2
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v12
+      with:
+        name: justinmoon
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - name: Cargo Cache
       uses: actions/cache@v3
       with:
         key: ${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('Cargo.lock') }}
         path: ~/.cargo
-        
-    - name: Test dev shell
+
+    - name: Run nix develop
       run: 'nix develop'
 
     # Use the optimized flakebox pipeline
     - name: Build Dependencies
+      if: matrix.host == 'linux'
       run: 'nix build .#workspaceDeps -L'
       
     - name: Build Workspace
+      if: matrix.host == 'linux'
       run: 'nix build .#default -L'
       
     - name: Run Lints
+      if: matrix.host == 'linux'
       run: 'nix develop --ignore-environment .#lint --command ./scripts/pre-commit.sh'
       
     - name: Run Rust Unittests
+      if: matrix.host == 'linux'
       run: 'nix build .#rustUnitTests -L'
+
+    - name: Run E2E Tests
+      # github macos runner hits `HVF error: HV_UNSUPPORTED` error when starting the emulator
+      if: matrix.host == 'linux'
+      run: 'nix develop -c just ui-tests'
 
 name: CI
 'on':
