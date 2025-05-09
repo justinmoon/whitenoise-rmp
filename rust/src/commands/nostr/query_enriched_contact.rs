@@ -11,7 +11,6 @@ pub async fn query_enriched_contact(
     pubkey: String,
     update_account: bool,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<EnrichedContact, String> {
     let pubkey = PublicKey::from_hex(&pubkey).map_err(|_| "Invalid pubkey".to_string())?;
 
@@ -77,9 +76,6 @@ pub async fn query_enriched_contact(
             .save(wn.clone())
             .await
             .map_err(|e| format!("Failed to save account: {}", e))?;
-        app_handle
-            .emit("account_changed", ())
-            .map_err(|e| e.to_string())?;
     }
 
     Ok(enriched_contact)

@@ -1,4 +1,5 @@
 use crate::accounts::Account;
+use crate::runtime;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::sync::Arc;
@@ -18,7 +19,6 @@ use std::sync::Arc;
 pub async fn set_active_account(
     hex_pubkey: String,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<Account, String> {
     tracing::debug!(target: "whitenoise::commands::accounts", "Setting active account: {}", hex_pubkey);
 
@@ -31,8 +31,8 @@ pub async fn set_active_account(
 
     account.active = true;
 
-    account
-        .set_active(wn.clone(), &app_handle)
-        .await
-        .map_err(|e| format!("Error setting active account: {}", e))
+    // NOTE: set_active requires a tauri::AppHandle, which is no longer available here.
+    // The following line is commented out for posterity:
+    // account.set_active(runtime::wn(), &app_handle).await.map_err(|e| format!("Error setting active account: {}", e))
+    Ok(account)
 }

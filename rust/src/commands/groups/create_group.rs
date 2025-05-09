@@ -53,7 +53,6 @@ pub async fn create_group(
     group_name: String,
     description: String,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<group_types::Group, String> {
     let active_account = Account::get_active(wn.clone())
         .await
@@ -151,9 +150,7 @@ pub async fn create_group(
     // Fan out the welcome message to all members
     for member in member_key_packages {
         let member_pubkey = PublicKey::from_hex(&member.pubkey).map_err(|e| e.to_string())?;
-        let contact =
-            fetch_enriched_contact(member.pubkey.clone(), false, wn.clone(), app_handle.clone())
-                .await?;
+        let contact = fetch_enriched_contact(member.pubkey.clone(), false, wn.clone()).await?;
 
         // We only want to connect to user relays in release mode
         let relay_urls: Vec<String> = if cfg!(dev) {
@@ -296,9 +293,9 @@ pub async fn create_group(
         .await
         .map_err(|e| format!("Failed to update MLS group subscription: {}", e))?;
 
-    app_handle
-        .emit("group_added", group.clone())
-        .map_err(|e| e.to_string())?;
+    // app_handle
+    //     .emit("group_added", group.clone())
+    //     .map_err(|e| e.to_string())?;
 
     Ok(group)
 }

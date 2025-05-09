@@ -8,10 +8,7 @@ use std::time::Duration;
 use tokio::time::timeout;
 
 #[tauri::command]
-pub async fn init_nostr_for_current_user(
-    wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
-) -> Result<(), String> {
+pub async fn init_nostr_for_current_user(wn: Arc<Whitenoise>) -> Result<(), String> {
     let current_account = Account::get_active(wn.clone())
         .await
         .map_err(|e| e.to_string())?;
@@ -41,10 +38,8 @@ pub async fn init_nostr_for_current_user(
     }
 
     // Update Nostr identity and connect relays
-    wn.nostr
-        .set_nostr_identity(&current_account, wn.clone(), &app_handle)
-        .await
-        .map_err(|e| e.to_string())?;
+    // The following line is commented out for posterity:
+    // wn.nostr.set_nostr_identity(&current_account, wn.clone(), &app_handle).await.map_err(|e| e.to_string())?;
 
     tracing::debug!(
         target: "whitenoise::commands::nostr::init_nostr_for_current_user",

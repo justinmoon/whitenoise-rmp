@@ -18,12 +18,15 @@ pub struct Whitenoise {
 }
 
 impl Whitenoise {
-    pub async fn new(data_dir: PathBuf, logs_dir: PathBuf) -> Self {
+    pub async fn new(data_dir: PathBuf) -> Self {
         tracing::info!(
             target: "whitenoise::whitenoise::new",
             "Creating Whitenoise instance with data_dir: {:?}",
             &data_dir
         );
+
+        // FIXME(justin): manual change while removing tauri ...
+        let logs_dir = data_dir.join("logs");
 
         Self {
             database: Arc::new(

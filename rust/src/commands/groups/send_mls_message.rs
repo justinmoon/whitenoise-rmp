@@ -22,7 +22,6 @@ pub async fn send_mls_message(
     tags: Option<Vec<Tag>>,
     uploaded_files: Option<Vec<FileUpload>>,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<MessageWithTokens, String> {
     let nostr_keys = wn.nostr.client.signer().await.map_err(|e| e.to_string())?;
     let mut final_tags = tags.unwrap_or_default();
@@ -149,9 +148,9 @@ pub async fn send_mls_message(
 
     if let Some(message) = message {
         let tokens = parse(&message.content);
-        app_handle
-            .emit("mls_message_sent", (&group, &message))
-            .expect("Couldn't emit event");
+        // app_handle
+        //     .emit("mls_message_sent", (&group, &message))
+        //     .expect("Couldn't emit event");
         Ok(MessageWithTokens { message, tokens })
     } else {
         Err("Message not found".to_string())
@@ -341,7 +340,7 @@ mod tests {
             // Mainnet invoice (lnbc)
             "lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs",
             // Testnet invoice (lntb)
-            "lntb20m1pvjluezsp5zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zygshp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqspp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqfpp3x9et2e20v6pu37c5d9vax37wxq72un989qrsgqdj545axuxtnfemtpwkc45hx9d2ft7x04mt8q7y6t0k2dge9e7h8kpy9p34ytyslj3yu569aalz2xdk8xkd7ltxqld94u8h2esmsmacgpghe9k8",
+            "lntb20m1pvjluezsp5zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zygshp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqspp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqfpp3x9et2e20v6pu37c5d9vax37wxq72un989qrsgqdj545axuxtnfemtpwkc45hx9d2ft7x04mt8q7y6t0k2dge9e7h8kpy9p34ytyslj3yu569aalz2xdk8xkd7ltxqld94u8h2esmsmacgpghe9k8",
             // Signet invoice (lntbs)
             "lntbs4320n1pnm35s8dqqnp4qg62h96f9rsq0fwq0wff6q2444j8ylp7984srtvxtdth8mmw008qgpp5uad7pp9cjtvde5l67dtakznj9x3fd4qggmeg4z6j5za6zxz0areqsp5dgdv4ugpfsgqmp7vuxpq5s06jxaesg9e7hu32ffjdc2va6cwpt4s9qyysgqcqpcxqyz5vqn94eujdlwdtjxqzu9tycyujzgwsq6xnjw3ycpqfvzk6dl3pk2wrjyja4645xftw7x4m4h9jl3wugczsdn9jeyhv75g63nk83y2848zqpsdqdx7",
             // Regtest invoice (lnbcrt)

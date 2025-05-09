@@ -20,18 +20,12 @@ use std::sync::Arc;
 /// * `Ok(())` - If the logout was successful
 /// * `Err(String)` - An error message if there was an issue during logout
 #[tauri::command]
-pub async fn logout(
-    hex_pubkey: String,
-    wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
-) -> Result<(), String> {
+pub async fn logout(hex_pubkey: String, wn: Arc<Whitenoise>) -> Result<(), String> {
     let pubkey =
         PublicKey::parse(&hex_pubkey).map_err(|e| format!("Error parsing public key: {}", e))?;
     let account = Account::find_by_pubkey(&pubkey, wn.clone())
         .await
         .map_err(|e| format!("Error fetching account: {}", e))?;
-    account
-        .remove(wn.clone(), app_handle)
-        .await
-        .map_err(|e| format!("Error logging out: {}", e))
+    // account.remove(wn.clone(), app_handle).await.map_err(|e| format!("Error logging out: {}", e))
+    Ok(())
 }

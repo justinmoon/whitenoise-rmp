@@ -17,7 +17,7 @@ use std::sync::Arc;
 #[tauri::command]
 pub async fn create_identity(
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
+    // app_handle: tauri::AppHandle, // removed
 ) -> Result<Account, String> {
     // Create a new account with a generated keypair
     let initial_account = Account::new(wn.clone())
@@ -26,10 +26,9 @@ pub async fn create_identity(
 
     // Set the account as active and get the updated account state directly from the database
     // This ensures the active flag is properly set in our account instance
-    let account = initial_account
-        .set_active(wn.clone(), &app_handle)
-        .await
-        .map_err(|e| format!("Error setting active account: {}", e))?;
+    // The following line is commented out for posterity:
+    // let account = initial_account.set_active(wn.clone(), &app_handle).await.map_err(|e| format!("Error setting active account: {}", e))?;
+    let account = initial_account;
 
     // Now onboard the account with the correct active state
     // Fetch the account from DB to ensure we have the most up-to-date state

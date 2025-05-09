@@ -42,7 +42,6 @@ pub async fn upload_file(
     group: group_types::Group,
     file: FileUpload,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<UploadedMedia, String> {
     let mut retries = 0;
     let mut last_error = None;
@@ -51,15 +50,15 @@ pub async fn upload_file(
         match add_media_file(&group, file.clone(), wn.clone()).await {
             Ok(media) => {
                 // Emit success event
-                app_handle
-                    .emit(
-                        "file_upload_success",
-                        (
-                            hex::encode(group.mls_group_id.as_slice()),
-                            media.blob_descriptor.url.clone(),
-                        ),
-                    )
-                    .expect("Couldn't emit event");
+                // app_handle
+                //     .emit(
+                //         "file_upload_success",
+                //         (
+                //             hex::encode(group.mls_group_id.as_slice()),
+                //             media.blob_descriptor.url.clone(),
+                //         ),
+                //     )
+                //     .expect("Couldn't emit event");
                 return Ok(media);
             }
             Err(e) => {
@@ -67,16 +66,16 @@ pub async fn upload_file(
                 retries += 1;
                 if retries < MAX_RETRIES {
                     // Emit retry event
-                    app_handle
-                        .emit(
-                            "file_upload_retry",
-                            (
-                                hex::encode(group.mls_group_id.as_slice()),
-                                retries,
-                                MAX_RETRIES,
-                            ),
-                        )
-                        .expect("Couldn't emit event");
+                    // app_handle
+                    //     .emit(
+                    //         "file_upload_retry",
+                    //         (
+                    //             hex::encode(group.mls_group_id.as_slice()),
+                    //             retries,
+                    //             MAX_RETRIES,
+                    //         ),
+                    //     )
+                    //     .expect("Couldn't emit event");
                 }
             }
         }
@@ -86,12 +85,12 @@ pub async fn upload_file(
     let error = last_error.unwrap_or_else(|| "Unknown error".to_string());
 
     // Emit error event
-    app_handle
-        .emit(
-            "file_upload_error",
-            (hex::encode(group.mls_group_id.as_slice()), error.clone()),
-        )
-        .expect("Couldn't emit event");
+    // app_handle
+    //     .emit(
+    //         "file_upload_error",
+    //         (hex::encode(group.mls_group_id.as_slice()), error.clone()),
+    //     )
+    //     .expect("Couldn't emit event");
 
     Err(error)
 }

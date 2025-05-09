@@ -98,6 +98,7 @@ impl Database {
         // Run migrations
         tracing::info!("Running migrations...");
 
+        // FIXME(justin): cursor altered this one substantially, should review
         let migrations_path = {
             // Just use a relative path from the data dir
             let wn = wn();

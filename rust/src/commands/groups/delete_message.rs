@@ -35,7 +35,6 @@ pub async fn delete_message(
     group: group_types::Group,
     message_id: String,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<MessageWithTokens, String> {
     let active_account = Account::get_active(wn.clone())
         .await
@@ -88,7 +87,6 @@ pub async fn delete_message(
             Some(deletion_tags),
             None,
             wn.clone(),
-            app_handle,
         )
         .await;
         tracing::debug!(target: "whitenoise::commands::groups::delete_message", "nostr_mls lock released");

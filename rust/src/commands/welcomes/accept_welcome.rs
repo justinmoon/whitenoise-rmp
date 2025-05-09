@@ -20,11 +20,7 @@ use crate::whitenoise::Whitenoise;
 /// # Events Emitted
 /// * `welcome_accepted` - Emitted with the updated welcome after it is accepted
 #[tauri::command]
-pub async fn accept_welcome(
-    welcome_event_id: String,
-    wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
-) -> Result<(), String> {
+pub async fn accept_welcome(welcome_event_id: String, wn: Arc<Whitenoise>) -> Result<(), String> {
     let welcome_event_id = EventId::parse(&welcome_event_id).map_err(|e| e.to_string())?;
 
     tracing::debug!(target: "whitenoise::commands::welcomes::accept_welcome", "Attempting to acquire nostr_mls lock");
@@ -77,9 +73,9 @@ pub async fn accept_welcome(
         .subscribe_mls_group_messages(group_ids)
         .await
         .map_err(|e| format!("Failed to update MLS group subscription: {}", e))?;
-    app_handle
-        .emit("welcome_accepted", welcome_event_id)
-        .map_err(|e| e.to_string())?;
+    // app_handle
+    //     .emit("welcome_accepted", welcome_event_id)
+    //     .map_err(|e| e.to_string())?;
 
     Ok(())
 }

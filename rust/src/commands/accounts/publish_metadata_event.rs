@@ -20,7 +20,6 @@ use tauri::Emitter;
 pub async fn publish_metadata_event(
     new_metadata: Metadata,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     let mut account = Account::get_active(wn.clone())
         .await
@@ -40,10 +39,6 @@ pub async fn publish_metadata_event(
         .map_err(|e| e.to_string())?;
 
     tracing::debug!("Published metadata event to relays: {:?}", event);
-
-    app_handle
-        .emit("account_updated", ())
-        .map_err(|e| e.to_string())?;
 
     Ok(())
 }

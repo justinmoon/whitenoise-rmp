@@ -20,11 +20,7 @@ use crate::whitenoise::Whitenoise;
 /// # Events Emitted
 /// * `welcome_declined` - Emitted with the updated welcome after it is declined
 #[tauri::command]
-pub async fn decline_welcome(
-    welcome_event_id: String,
-    wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
-) -> Result<(), String> {
+pub async fn decline_welcome(welcome_event_id: String, wn: Arc<Whitenoise>) -> Result<(), String> {
     let welcome_event_id = EventId::parse(&welcome_event_id).map_err(|e| e.to_string())?;
 
     tracing::debug!(target: "whitenoise::commands::welcomes::decline_welcome", "Attempting to acquire nostr_mls lock");
@@ -57,9 +53,9 @@ pub async fn decline_welcome(
 
     tracing::debug!(target: "whitenoise::commands::welcomes::decline_welcome", "nostr_mls lock released");
 
-    app_handle
-        .emit("welcome_declined", welcome_event_id)
-        .map_err(|e| e.to_string())?;
+    // app_handle
+    //     .emit("welcome_declined", welcome_event_id)
+    //     .map_err(|e| e.to_string())?;
 
     Ok(())
 }

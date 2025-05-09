@@ -30,7 +30,6 @@ pub async fn pay_invoice(
     tags: Option<Vec<Tag>>,
     bolt11: String,
     wn: Arc<Whitenoise>,
-    app_handle: tauri::AppHandle,
 ) -> Result<(), CommandError> {
     let active_account = Account::get_active(wn.clone())
         .await
@@ -53,7 +52,6 @@ pub async fn pay_invoice(
         message_params.tags,
         None,
         wn,
-        app_handle,
     )
     .await
     .map_err(|_| CommandError::MessageError)?;

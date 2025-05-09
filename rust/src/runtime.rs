@@ -5,9 +5,9 @@ use tokio::runtime::Runtime;
 
 static WN: OnceCell<Arc<Whitenoise>> = OnceCell::new();
 
-pub fn init(data_dir: PathBuf, logs_dir: PathBuf) {
+pub fn init(data_dir: PathBuf) {
     let rt = Runtime::new().expect("tokio-rt");
-    let wn = rt.block_on(Whitenoise::new(data_dir, logs_dir));
+    let wn = rt.block_on(Whitenoise::new(data_dir));
 
     if WN.set(Arc::new(wn)).is_err() {
         panic!("runtime::init called more than once");
