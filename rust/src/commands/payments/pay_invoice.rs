@@ -4,6 +4,7 @@ use crate::payments::{self, PaymentError};
 use crate::whitenoise::Whitenoise;
 use nostr_mls::prelude::*;
 use serde::Serialize;
+use std::sync::Arc;
 
 #[derive(Debug, thiserror::Error, Serialize)]
 pub enum CommandError {
@@ -28,7 +29,7 @@ pub async fn pay_invoice(
     group: group_types::Group,
     tags: Option<Vec<Tag>>,
     bolt11: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), CommandError> {
     let active_account = Account::get_active(wn.clone())

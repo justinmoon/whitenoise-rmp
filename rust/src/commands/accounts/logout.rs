@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 /// Logs out the specified account.
 ///
@@ -21,7 +22,7 @@ use nostr_sdk::prelude::*;
 #[tauri::command]
 pub async fn logout(
     hex_pubkey: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     let pubkey =

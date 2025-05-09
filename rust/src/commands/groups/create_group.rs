@@ -1,4 +1,5 @@
 use std::ops::Add;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -51,7 +52,7 @@ pub async fn create_group(
     admin_pubkeys: Vec<String>,
     group_name: String,
     description: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<group_types::Group, String> {
     let active_account = Account::get_active(wn.clone())

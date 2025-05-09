@@ -7,6 +7,7 @@
 //! and deleting key packages from relays.
 
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use thiserror::Error;
 
 use crate::accounts::{Account, AccountError};
@@ -48,7 +49,7 @@ pub type Result<T> = std::result::Result<T, KeyPackageError>;
 /// Fetches key packages for a list of pubkeys
 pub async fn fetch_key_packages_for_members(
     member_pubkeys: &[String],
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<Vec<KeyPackageResponse>> {
     let mut member_key_packages: Vec<KeyPackageResponse> = Vec::new();
 
@@ -90,7 +91,7 @@ pub async fn fetch_key_packages_for_members(
 /// Fetches key packages for a single pubkey
 pub async fn fetch_key_package_for_pubkey(
     pubkey: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<Option<(EventId, KeyPackage)>> {
     tracing::debug!(target: "whitenoise::key_packages::fetch_key_package_for_pubkey", "Fetching key package for pubkey: {:?}", pubkey);
     let public_key = PublicKey::from_hex(&pubkey).expect("Invalid pubkey");
@@ -173,7 +174,7 @@ pub async fn fetch_key_package_for_pubkey(
 }
 
 /// Publishes a new key package to relays
-pub async fn publish_key_package(wn: tauri::State<'_, Whitenoise>) -> Result<()> {
+pub async fn publish_key_package(wn: Arc<Whitenoise>) -> Result<()> {
     let active_account = Account::get_active(wn.clone()).await?;
 
     let key_package_relays: Vec<RelayUrl> = active_account
@@ -262,7 +263,7 @@ pub async fn delete_key_package_from_relays(
     event_id: &EventId,
     key_package_relays: &[String],
     delete_mls_stored_keys: bool,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<()> {
     let active_account = Account::get_active(wn.clone()).await?;
     let current_pubkey = active_account.pubkey;

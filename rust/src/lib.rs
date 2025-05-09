@@ -7,6 +7,7 @@ mod media;
 mod nostr_manager;
 mod payments;
 mod relays;
+pub mod runtime;
 mod secrets_store;
 mod types;
 mod whitenoise;

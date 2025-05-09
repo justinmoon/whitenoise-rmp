@@ -2,11 +2,12 @@ use crate::types::EnrichedContact;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 #[tauri::command]
 pub async fn search_for_enriched_contacts(
     query: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<HashMap<String, EnrichedContact>, String> {
     let enriched_users = wn
         .nostr

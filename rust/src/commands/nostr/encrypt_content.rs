@@ -1,13 +1,14 @@
 use crate::types::NostrEncryptionMethod;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 #[tauri::command]
 pub async fn encrypt_content(
     content: String,
     pubkey: String,
     method: NostrEncryptionMethod,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<String, String> {
     wn.nostr
         .encrypt_content(content, pubkey, method)

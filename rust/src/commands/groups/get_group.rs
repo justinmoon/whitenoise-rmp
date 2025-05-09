@@ -1,4 +1,5 @@
 use std::collections::BTreeSet;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -29,10 +30,7 @@ pub struct GroupWithRelays {
 /// - Group not found in database
 /// - Database error occurs
 #[tauri::command]
-pub async fn get_group(
-    group_id: &str,
-    wn: tauri::State<'_, Whitenoise>,
-) -> Result<GroupWithRelays, String> {
+pub async fn get_group(group_id: &str, wn: Arc<Whitenoise>) -> Result<GroupWithRelays, String> {
     let mls_group_id = GroupId::from_slice(
         &hex::decode(group_id).map_err(|e| format!("Error decoding group id: {}", e))?,
     );

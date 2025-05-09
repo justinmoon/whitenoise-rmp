@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 /// Removes the Nostr Wallet Connect URI for the active account.
 ///
@@ -13,9 +14,7 @@ use nostr_sdk::prelude::*;
 /// * `Ok(())` - If the URI was removed successfully
 /// * `Err(String)` - An error message if there was an issue removing the URI
 #[tauri::command]
-pub async fn remove_nostr_wallet_connect_uri(
-    wn: tauri::State<'_, Whitenoise>,
-) -> Result<(), String> {
+pub async fn remove_nostr_wallet_connect_uri(wn: Arc<Whitenoise>) -> Result<(), String> {
     let active_account = Account::get_active(wn.clone())
         .await
         .map_err(|e| format!("Error getting active account: {}", e))?;

@@ -1,9 +1,9 @@
+use crate::runtime::wn;
 use sqlx::sqlite::SqlitePoolOptions;
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use std::fs;
 use std::path::PathBuf;
 use std::time::Duration;
-use tauri::{path::BaseDirectory, AppHandle, Manager};
 use thiserror::Error;
 
 const MIGRATION_FILES: &[(&str, &[u8])] = &[
@@ -32,7 +32,7 @@ pub enum DatabaseError {
     Tauri(#[from] tauri::Error),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Database {
     pub pool: SqlitePool,
     #[allow(unused)]
@@ -42,7 +42,7 @@ pub struct Database {
 }
 
 impl Database {
-    pub async fn new(db_path: PathBuf, app_handle: AppHandle) -> Result<Self, DatabaseError> {
+    pub async fn new(db_path: PathBuf) -> Result<Self, DatabaseError> {
         // Create parent directories if they don't exist
         if let Some(parent) = db_path.parent() {
             std::fs::create_dir_all(parent)?;
@@ -98,25 +98,10 @@ impl Database {
         // Run migrations
         tracing::info!("Running migrations...");
 
-        let migrations_path = if cfg!(target_os = "android") {
-            // On Android, we need to copy migrations to a temporary directory
-            let temp_dir = app_handle.path().app_data_dir()?.join("temp_migrations");
-            if temp_dir.exists() {
-                fs::remove_dir_all(&temp_dir)?;
-            }
-            fs::create_dir_all(&temp_dir)?;
-
-            // Copy all migration files from the embedded assets
-            for (filename, content) in MIGRATION_FILES {
-                tracing::info!("Writing migration file: {}", filename);
-                fs::write(temp_dir.join(filename), content)?;
-            }
-
-            temp_dir
-        } else {
-            app_handle
-                .path()
-                .resolve("db_migrations", BaseDirectory::Resource)?
+        let migrations_path = {
+            // Just use a relative path from the data dir
+            let wn = wn();
+            wn.data_dir.join("../db_migrations")
         };
 
         tracing::info!("Migrations path: {:?}", migrations_path);
@@ -132,12 +117,6 @@ impl Database {
             Ok(migrator) => {
                 migrator.run(&pool).await?;
                 tracing::info!("Migrations applied successfully");
-                // Clean up temp directory on Android after successful migration
-                if cfg!(target_os = "android") {
-                    if let Ok(temp_dir) = app_handle.path().app_data_dir() {
-                        let _ = fs::remove_dir_all(temp_dir.join("temp_migrations"));
-                    }
-                }
             }
             Err(e) => {
                 tracing::error!("Failed to create migrator: {:?}", e);

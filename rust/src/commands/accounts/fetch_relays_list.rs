@@ -2,6 +2,7 @@ use crate::accounts::Account;
 use crate::relays::RelayType;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 /// Fetches a list of relays associated with a specific user and kind.
 ///
@@ -29,7 +30,7 @@ use nostr_sdk::prelude::*;
 pub async fn fetch_relays_list(
     kind: u64,
     pubkey: Option<String>,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<Vec<String>, String> {
     // Get the target pubkey
     let target_pubkey = if let Some(key) = pubkey {

@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nwc::prelude::*;
+use std::sync::Arc;
 
 /// Gets the balance information from the connected Nostr Wallet Connect wallet.
 ///
@@ -13,9 +14,7 @@ use nwc::prelude::*;
 /// * `Ok(u64)` - The balance in sats if successful
 /// * `Err(String)` - An error message if there was an issue getting the balance
 #[tauri::command]
-pub async fn get_nostr_wallet_connect_balance(
-    wn: tauri::State<'_, Whitenoise>,
-) -> Result<u64, String> {
+pub async fn get_nostr_wallet_connect_balance(wn: Arc<Whitenoise>) -> Result<u64, String> {
     let active_account = Account::get_active(wn.clone())
         .await
         .map_err(|e| format!("Error getting active account: {}", e))?;

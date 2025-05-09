@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -6,9 +7,7 @@ use crate::whitenoise::Whitenoise;
 
 /// Fetches welcomes from the database for the active user
 #[tauri::command]
-pub async fn get_welcomes(
-    wn: tauri::State<'_, Whitenoise>,
-) -> Result<Vec<welcome_types::Welcome>, String> {
+pub async fn get_welcomes(wn: Arc<Whitenoise>) -> Result<Vec<welcome_types::Welcome>, String> {
     tracing::debug!(target: "whitenoise::commands::welcomes::get_welcomes", "Fetching welcomes");
     tracing::debug!(target: "whitenoise::commands::welcomes::get_welcomes", "Attempting to acquire nostr_mls lock");
     let nostr_mls_guard = match timeout(Duration::from_secs(5), wn.nostr_mls.lock()).await {

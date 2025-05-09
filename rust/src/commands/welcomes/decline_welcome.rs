@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tauri::Emitter;
 use tokio::time::timeout;
@@ -21,7 +22,7 @@ use crate::whitenoise::Whitenoise;
 #[tauri::command]
 pub async fn decline_welcome(
     welcome_event_id: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     let welcome_event_id = EventId::parse(&welcome_event_id).map_err(|e| e.to_string())?;

@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -33,7 +34,7 @@ use crate::whitenoise::Whitenoise;
 pub async fn delete_message(
     group: group_types::Group,
     message_id: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<MessageWithTokens, String> {
     let active_account = Account::get_active(wn.clone())

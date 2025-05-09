@@ -1,4 +1,5 @@
 use crate::whitenoise::Whitenoise;
+use std::sync::Arc;
 
 pub mod accounts;
 pub mod groups;
@@ -10,7 +11,7 @@ pub mod payments;
 pub mod welcomes;
 
 #[tauri::command]
-pub async fn delete_all_data(wn: tauri::State<'_, Whitenoise>) -> Result<(), String> {
+pub async fn delete_all_data(wn: Arc<Whitenoise>) -> Result<(), String> {
     wn.delete_all_data().await.map_err(|e| e.to_string())?;
     Ok(())
 }

@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 /// Creates a new identity by generating a new keypair, logging in with it, and onboarding the account by publishing the metadata event and key package to the relays.
 ///
@@ -15,7 +16,7 @@ use nostr_sdk::prelude::*;
 /// * `Err(String)` - An error message if there was an issue creating the identity.
 #[tauri::command]
 pub async fn create_identity(
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<Account, String> {
     // Create a new account with a generated keypair

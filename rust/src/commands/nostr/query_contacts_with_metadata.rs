@@ -1,10 +1,11 @@
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 #[tauri::command]
 pub async fn query_contacts_with_metadata(
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<HashMap<String, Metadata>, String> {
     let events = wn.nostr.query_contacts().await.map_err(|e| e.to_string())?;
 

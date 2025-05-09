@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 /// Sets the active account.
 ///
@@ -16,7 +17,7 @@ use nostr_sdk::prelude::*;
 #[tauri::command]
 pub async fn set_active_account(
     hex_pubkey: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<Account, String> {
     tracing::debug!(target: "whitenoise::commands::accounts", "Setting active account: {}", hex_pubkey);

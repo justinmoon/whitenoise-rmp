@@ -1,12 +1,13 @@
 use crate::whitenoise::Whitenoise;
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
 #[tauri::command]
 pub async fn query_message(
     message_id: &str,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<Option<message_types::Message>, String> {
     let event_id = EventId::parse(message_id).map_err(|e| e.to_string())?;
 

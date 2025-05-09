@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -6,10 +7,7 @@ use crate::whitenoise::Whitenoise;
 
 // TODO: THIS ISN'T CORRECT
 #[tauri::command]
-pub async fn rotate_key_in_group(
-    group_id: &str,
-    wn: tauri::State<'_, Whitenoise>,
-) -> Result<(), String> {
+pub async fn rotate_key_in_group(group_id: &str, wn: Arc<Whitenoise>) -> Result<(), String> {
     let mls_group_id = GroupId::from_slice(
         &hex::decode(group_id).map_err(|e| format!("Error decoding group id: {}", e))?,
     );

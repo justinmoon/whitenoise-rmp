@@ -3,8 +3,9 @@ use crate::relays::RelayType;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::event::EventBuilder;
 use nostr_sdk::nips::nip09::EventDeletionRequest;
+use std::sync::Arc;
 #[tauri::command]
-pub async fn delete_all_key_packages(wn: tauri::State<'_, Whitenoise>) -> Result<(), String> {
+pub async fn delete_all_key_packages(wn: Arc<Whitenoise>) -> Result<(), String> {
     let active_account = Account::get_active(wn.clone())
         .await
         .map_err(|e| e.to_string())?;

@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -16,7 +17,7 @@ use crate::whitenoise::Whitenoise;
 #[tauri::command]
 pub async fn get_welcome(
     event_id: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<welcome_types::Welcome, String> {
     let event_id = EventId::parse(&event_id).map_err(|e| e.to_string())?;
     tracing::debug!(target: "whitenoise::commands::welcomes::get_welcome", "Attempting to acquire nostr_mls lock");

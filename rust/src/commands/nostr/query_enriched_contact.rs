@@ -3,13 +3,14 @@ use crate::relays::RelayType;
 use crate::types::EnrichedContact;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 use tauri::Emitter;
 
 #[tauri::command]
 pub async fn query_enriched_contact(
     pubkey: String,
     update_account: bool,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<EnrichedContact, String> {
     let pubkey = PublicKey::from_hex(&pubkey).map_err(|_| "Invalid pubkey".to_string())?;

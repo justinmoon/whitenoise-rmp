@@ -2,12 +2,13 @@ use crate::accounts::Account;
 use crate::relays::RelayType;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 
 #[tauri::command]
 pub async fn publish_relay_list(
     relays: Vec<String>,
     kind: u64,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<(), String> {
     let signer = wn.nostr.client.signer().await.map_err(|e| e.to_string())?;
 

@@ -2,13 +2,14 @@ use crate::accounts::Account;
 use crate::media::blossom::BlossomClient;
 use crate::nostr_manager::event_processor::EventProcessor;
 use crate::relays::RelayType;
+use crate::runtime::wn;
 use crate::types::NostrEncryptionMethod;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::{AppHandle, Manager};
+use tauri::Manager;
 use thiserror::Error;
 use tokio::{spawn, sync::Mutex};
 
@@ -90,7 +91,7 @@ impl Default for NostrManagerSettings {
 pub type Result<T> = std::result::Result<T, NostrManagerError>;
 
 impl NostrManager {
-    pub async fn new(db_path: PathBuf, app_handle: AppHandle) -> Result<Self> {
+    pub async fn new(db_path: PathBuf) -> Result<Self> {
         let opts = Options::default();
 
         // Initialize the client with the appropriate database based on platform
@@ -123,7 +124,7 @@ impl NostrManager {
         // Connect to the default relays
         client.connect().await;
 
-        let event_processor = Arc::new(Mutex::new(EventProcessor::new(app_handle)));
+        let event_processor = Arc::new(Mutex::new(EventProcessor::new()));
 
         Ok(Self {
             client,
@@ -173,7 +174,7 @@ impl NostrManager {
     pub async fn set_nostr_identity(
         &self,
         account: &Account,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
         app_handle: &tauri::AppHandle,
     ) -> Result<()> {
         tracing::debug!(
@@ -389,7 +390,7 @@ impl NostrManager {
             target: "whitenoise::nostr_manager::set_nostr_identity",
             "Creating new event processor"
         );
-        let new_processor = EventProcessor::new(app_handle.clone());
+        let new_processor = EventProcessor::new();
         *self.event_processor.lock().await = new_processor;
 
         // Spawn two tasks in parallel:
@@ -405,11 +406,12 @@ impl NostrManager {
             let wn_state = app_handle_clone_subs.state::<Whitenoise>();
 
             let group_ids = account_clone_subs
-                .nostr_group_ids(wn_state.clone())
+                .nostr_group_ids(Arc::new(wn_state.inner().clone()))
                 .await
                 .expect("Couldn't get nostr group ids");
 
             match wn_state
+                .inner()
                 .nostr
                 .setup_subscriptions(account_clone_subs.pubkey, group_ids)
                 .await
@@ -441,14 +443,15 @@ impl NostrManager {
             );
             let wn_state = app_handle_clone_fetch.state::<Whitenoise>();
 
-            let group_ids = Account::find_by_pubkey(&pubkey, wn_state.clone())
+            let group_ids = Account::find_by_pubkey(&pubkey, Arc::new(wn_state.inner().clone()))
                 .await
                 .expect("Couldn't get account")
-                .nostr_group_ids(wn_state.clone())
+                .nostr_group_ids(Arc::new(wn_state.inner().clone()))
                 .await
                 .expect("Couldn't get nostr group ids");
 
             match &wn_state
+                .inner()
                 .nostr
                 .fetch_for_user(pubkey, last_synced, group_ids)
                 .await
@@ -461,10 +464,10 @@ impl NostrManager {
                     );
                     // Update last_synced through a new database query
                     if let Ok(mut account) =
-                        Account::find_by_pubkey(&pubkey, wn_state.clone()).await
+                        Account::find_by_pubkey(&pubkey, Arc::new(wn_state.inner().clone())).await
                     {
                         account.last_synced = Timestamp::now();
-                        if let Err(e) = account.save(wn_state.clone()).await {
+                        if let Err(e) = account.save(Arc::new(wn_state.inner().clone())).await {
                             tracing::error!(
                                 target: "whitenoise::nostr_manager::set_nostr_identity",
                                 "Error updating last_synced: {}",

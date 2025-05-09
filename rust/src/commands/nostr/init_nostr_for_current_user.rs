@@ -3,12 +3,13 @@ use crate::whitenoise::Whitenoise;
 use nostr_mls::NostrMls;
 use nostr_mls_sqlite_storage::NostrMlsSqliteStorage;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
 #[tauri::command]
 pub async fn init_nostr_for_current_user(
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     let current_account = Account::get_active(wn.clone())

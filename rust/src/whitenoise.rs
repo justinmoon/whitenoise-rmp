@@ -18,7 +18,7 @@ pub struct Whitenoise {
 }
 
 impl Whitenoise {
-    pub async fn new(data_dir: PathBuf, logs_dir: PathBuf, app_handle: AppHandle) -> Self {
+    pub async fn new(data_dir: PathBuf, logs_dir: PathBuf) -> Self {
         tracing::info!(
             target: "whitenoise::whitenoise::new",
             "Creating Whitenoise instance with data_dir: {:?}",
@@ -27,11 +27,11 @@ impl Whitenoise {
 
         Self {
             database: Arc::new(
-                Database::new(data_dir.join("whitenoise.sqlite"), app_handle.clone())
+                Database::new(data_dir.join("whitenoise.sqlite"))
                     .await
                     .expect("Failed to create database"),
             ),
-            nostr: NostrManager::new(data_dir.clone(), app_handle.clone())
+            nostr: NostrManager::new(data_dir.clone())
                 .await
                 .expect("Failed to create Nostr manager"),
             nostr_mls: Arc::new(Mutex::new(None)),

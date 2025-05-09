@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nwc::prelude::*;
+use std::sync::Arc;
 
 /// Sets the Nostr Wallet Connect URI for the active account.
 ///
@@ -16,7 +17,7 @@ use nwc::prelude::*;
 #[tauri::command]
 pub async fn set_nostr_wallet_connect_uri(
     nostr_wallet_connect_uri: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<(), String> {
     let active_account = Account::get_active(wn.clone())
         .await

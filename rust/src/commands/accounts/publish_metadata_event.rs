@@ -1,6 +1,7 @@
 use crate::accounts::Account;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
+use std::sync::Arc;
 use tauri::Emitter;
 
 /// Publishes a metadata event to the Nostr network and updates the local account metadata.
@@ -18,7 +19,7 @@ use tauri::Emitter;
 #[tauri::command]
 pub async fn publish_metadata_event(
     new_metadata: Metadata,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     let mut account = Account::get_active(wn.clone())

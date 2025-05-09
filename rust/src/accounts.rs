@@ -7,6 +7,7 @@ use nostr_mls::prelude::*;
 use nostr_mls_sqlite_storage::NostrMlsSqliteStorage;
 use nostr_sdk::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use tauri::Emitter;
 use thiserror::Error;
 
@@ -102,7 +103,7 @@ pub struct Account {
 
 impl Account {
     /// Generates a new keypair, generates a petname, and saves the mostly blank account to the database
-    pub async fn new(wn: tauri::State<'_, Whitenoise>) -> Result<Self> {
+    pub async fn new(wn: Arc<Whitenoise>) -> Result<Self> {
         tracing::debug!(target: "whitenoise::accounts", "Generating new keypair");
         let keys = Keys::generate();
 
@@ -152,7 +153,7 @@ impl Account {
     pub async fn add_from_keys(
         keys: &Keys,
         set_active: bool,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
         app_handle: &tauri::AppHandle,
     ) -> Result<Self> {
         let pubkey = keys.public_key();
@@ -258,10 +259,7 @@ impl Account {
     }
 
     /// Finds an account by its public key
-    pub async fn find_by_pubkey(
-        pubkey: &PublicKey,
-        wn: tauri::State<'_, Whitenoise>,
-    ) -> Result<Self> {
+    pub async fn find_by_pubkey(pubkey: &PublicKey, wn: Arc<Whitenoise>) -> Result<Self> {
         let mut txn = wn.database.pool.begin().await?;
 
         let row = sqlx::query_as::<_, AccountRow>("SELECT * FROM accounts WHERE pubkey = ?")
@@ -281,7 +279,7 @@ impl Account {
     }
 
     /// Returns all accounts
-    pub async fn all(wn: tauri::State<'_, Whitenoise>) -> Result<Vec<Self>> {
+    pub async fn all(wn: Arc<Whitenoise>) -> Result<Vec<Self>> {
         let mut txn = wn.database.pool.begin().await?;
 
         let iter = sqlx::query_as::<_, AccountRow>("SELECT * FROM accounts")
@@ -304,7 +302,7 @@ impl Account {
     }
 
     /// Returns the currently active account
-    pub async fn get_active(wn: tauri::State<'_, Whitenoise>) -> Result<Self> {
+    pub async fn get_active(wn: Arc<Whitenoise>) -> Result<Self> {
         // First validate/fix the active state
         Self::validate_active_state(wn.clone()).await?;
 
@@ -341,7 +339,7 @@ impl Account {
     /// Returns error if:
     /// - No active account is found
     /// - Active account's public key is invalid
-    pub async fn get_active_pubkey(wn: tauri::State<'_, Whitenoise>) -> Result<PublicKey> {
+    pub async fn get_active_pubkey(wn: Arc<Whitenoise>) -> Result<PublicKey> {
         // First validate/fix the active state
         Self::validate_active_state(wn.clone()).await?;
 
@@ -361,7 +359,7 @@ impl Account {
     /// Sets the active account in the database and updates nostr for the active identity
     pub async fn set_active(
         &self,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
         app_handle: &tauri::AppHandle,
     ) -> Result<Self> {
         tracing::debug!(
@@ -458,10 +456,7 @@ impl Account {
     }
 
     /// Returns the groups the account is a member of
-    pub async fn groups(
-        &self,
-        wn: tauri::State<'_, Whitenoise>,
-    ) -> Result<Vec<group_types::Group>> {
+    pub async fn groups(&self, wn: Arc<Whitenoise>) -> Result<Vec<group_types::Group>> {
         tracing::debug!(target: "whitenoise::accounts::groups", "Attempting to acquire nostr_mls lock");
         let nostr_mls_guard = match tokio::time::timeout(
             std::time::Duration::from_secs(5),
@@ -491,7 +486,7 @@ impl Account {
         result
     }
 
-    pub async fn nostr_group_ids(&self, wn: tauri::State<'_, Whitenoise>) -> Result<Vec<String>> {
+    pub async fn nostr_group_ids(&self, wn: Arc<Whitenoise>) -> Result<Vec<String>> {
         let groups = self.groups(wn).await?;
         Ok(groups
             .iter()
@@ -499,18 +494,14 @@ impl Account {
             .collect::<Vec<_>>())
     }
 
-    pub fn keys(&self, wn: tauri::State<'_, Whitenoise>) -> Result<Keys> {
+    pub fn keys(&self, wn: Arc<Whitenoise>) -> Result<Keys> {
         Ok(secrets_store::get_nostr_keys_for_pubkey(
             self.pubkey.to_hex().as_str(),
             &wn.data_dir,
         )?)
     }
 
-    pub async fn relays(
-        &self,
-        relay_type: RelayType,
-        wn: tauri::State<'_, Whitenoise>,
-    ) -> Result<Vec<String>> {
+    pub async fn relays(&self, relay_type: RelayType, wn: Arc<Whitenoise>) -> Result<Vec<String>> {
         Ok(sqlx::query_scalar::<_, String>(
             "SELECT url FROM account_relays WHERE relay_type = ? AND account_pubkey = ?",
         )
@@ -524,7 +515,7 @@ impl Account {
         &self,
         relay_type: RelayType,
         relays: &Vec<String>,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
     ) -> Result<Self> {
         if relays.is_empty() {
             return Ok(self.clone());
@@ -551,7 +542,7 @@ impl Account {
     }
 
     /// Saves the account to the database
-    pub async fn save(&self, wn: tauri::State<'_, Whitenoise>) -> Result<Self> {
+    pub async fn save(&self, wn: Arc<Whitenoise>) -> Result<Self> {
         tracing::debug!(
             target: "whitenoise::accounts::save",
             "Beginning save transaction for pubkey: {}",
@@ -599,11 +590,7 @@ impl Account {
     }
 
     /// Removes the account from the database
-    pub async fn remove(
-        &self,
-        wn: tauri::State<'_, Whitenoise>,
-        app_handle: tauri::AppHandle,
-    ) -> Result<()> {
+    pub async fn remove(&self, wn: Arc<Whitenoise>, app_handle: tauri::AppHandle) -> Result<()> {
         let hex_pubkey = self.pubkey.to_hex();
 
         let mut txn = wn.database.pool.begin().await?;
@@ -678,7 +665,7 @@ impl Account {
     }
 
     // Add a validation method
-    async fn validate_active_state(wn: tauri::State<'_, Whitenoise>) -> Result<()> {
+    async fn validate_active_state(wn: Arc<Whitenoise>) -> Result<()> {
         let mut txn = wn.database.pool.begin().await?;
 
         // Check if we have multiple active accounts
@@ -730,7 +717,7 @@ impl Account {
     pub fn store_nostr_wallet_connect_uri(
         &self,
         nostr_wallet_connect_uri: &str,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
     ) -> Result<()> {
         secrets_store::store_nostr_wallet_connect_uri(
             &self.pubkey.to_hex(),
@@ -745,26 +732,19 @@ impl Account {
     /// # Returns
     /// * `Result<Option<String>>` - Some(uri) if a URI is stored, None if no URI is stored,
     ///   or an error if the operation fails
-    pub fn get_nostr_wallet_connect_uri(
-        &self,
-        wn: tauri::State<'_, Whitenoise>,
-    ) -> Result<Option<String>> {
+    pub fn get_nostr_wallet_connect_uri(&self, wn: Arc<Whitenoise>) -> Result<Option<String>> {
         secrets_store::get_nostr_wallet_connect_uri(&self.pubkey.to_hex(), &wn.data_dir)
             .map_err(AccountError::SecretsStoreError)
     }
 
     /// Removes the Nostr Wallet Connect URI for this account
-    pub fn remove_nostr_wallet_connect_uri(&self, wn: tauri::State<'_, Whitenoise>) -> Result<()> {
+    pub fn remove_nostr_wallet_connect_uri(&self, wn: Arc<Whitenoise>) -> Result<()> {
         secrets_store::remove_nostr_wallet_connect_uri(&self.pubkey.to_hex(), &wn.data_dir)
             .map_err(AccountError::SecretsStoreError)
     }
 
     /// Helper method to publish a given type of relay list event to Nostr using the relays stored in the database
-    async fn publish_relay_list(
-        &self,
-        relay_type: RelayType,
-        wn: tauri::State<'_, Whitenoise>,
-    ) -> Result<()> {
+    async fn publish_relay_list(&self, relay_type: RelayType, wn: Arc<Whitenoise>) -> Result<()> {
         let relays = self.relays(relay_type, wn.clone()).await?;
         if relays.is_empty() {
             return Ok(());
@@ -794,7 +774,7 @@ impl Account {
         Ok(())
     }
 
-    pub async fn onboard_new_account(&mut self, wn: tauri::State<'_, Whitenoise>) -> Result<Self> {
+    pub async fn onboard_new_account(&mut self, wn: Arc<Whitenoise>) -> Result<Self> {
         tracing::debug!(target: "whitenoise::accounts::onboard_new_account", "Starting onboarding process");
 
         // Create key package and inbox relays lists with default relays

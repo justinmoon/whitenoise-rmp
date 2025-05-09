@@ -1,5 +1,6 @@
 use crate::key_packages::fetch_key_package_for_pubkey;
 use crate::whitenoise::Whitenoise;
+use std::sync::Arc;
 
 /// Checks if a valid MLS key package exists for a given user
 ///
@@ -19,7 +20,7 @@ use crate::whitenoise::Whitenoise;
 #[tauri::command]
 pub async fn valid_key_package_exists_for_user(
     pubkey: String,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<bool, String> {
     let key_package = fetch_key_package_for_pubkey(pubkey, wn.clone())
         .await

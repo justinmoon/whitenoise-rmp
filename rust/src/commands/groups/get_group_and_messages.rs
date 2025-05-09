@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -26,7 +27,7 @@ use crate::whitenoise::Whitenoise;
 #[tauri::command]
 pub async fn get_group_and_messages(
     group_id: &str,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<GroupAndMessages, String> {
     let mls_group_id = GroupId::from_slice(
         &hex::decode(group_id).map_err(|e| format!("Error decoding group id: {}", e))?,

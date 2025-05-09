@@ -50,6 +50,7 @@ pub use types::*;
 
 use ::image::GenericImageView;
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 
 use crate::accounts::Account;
 use crate::database::Database;
@@ -76,7 +77,7 @@ use crate::whitenoise::Whitenoise;
 pub async fn add_media_file(
     group: &group_types::Group,
     uploaded_file: FileUpload,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<UploadedMedia, MediaError> {
     let active_account = Account::get_active(wn.clone())
         .await

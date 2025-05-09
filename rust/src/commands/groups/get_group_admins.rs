@@ -1,4 +1,5 @@
 use std::collections::BTreeSet;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
@@ -10,7 +11,7 @@ use crate::whitenoise::Whitenoise;
 #[tauri::command]
 pub async fn get_group_admins(
     group_id: &str,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
 ) -> Result<BTreeSet<PublicKey>, String> {
     let mls_group_id = GroupId::from_slice(
         &hex::decode(group_id).map_err(|e| format!("Error decoding group id: {}", e))?,

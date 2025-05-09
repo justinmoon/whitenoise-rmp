@@ -4,12 +4,13 @@ use crate::types::EnrichedContact;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 impl NostrManager {
     pub async fn search_users(
         &self,
         query: String,
-        wn: tauri::State<'_, Whitenoise>,
+        wn: Arc<Whitenoise>,
     ) -> Result<HashMap<String, EnrichedContact>> {
         let filter = Filter::new().kind(Kind::Metadata).search(query);
 

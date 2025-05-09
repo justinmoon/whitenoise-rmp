@@ -21,7 +21,7 @@ pub async fn send_mls_message(
     kind: u16,
     tags: Option<Vec<Tag>>,
     uploaded_files: Option<Vec<FileUpload>>,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<MessageWithTokens, String> {
     let nostr_keys = wn.nostr.client.signer().await.map_err(|e| e.to_string())?;

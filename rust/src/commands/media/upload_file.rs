@@ -1,4 +1,5 @@
 use nostr_mls::prelude::*;
+use std::sync::Arc;
 use tauri::Emitter;
 
 use crate::media::{add_media_file, FileUpload, UploadedMedia};
@@ -40,7 +41,7 @@ const MAX_RETRIES: u8 = 3;
 pub async fn upload_file(
     group: group_types::Group,
     file: FileUpload,
-    wn: tauri::State<'_, Whitenoise>,
+    wn: Arc<Whitenoise>,
     app_handle: tauri::AppHandle,
 ) -> Result<UploadedMedia, String> {
     let mut retries = 0;
