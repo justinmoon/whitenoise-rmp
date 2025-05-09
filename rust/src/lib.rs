@@ -1,4 +1,15 @@
+mod accounts;
+mod commands;
+mod database;
+mod key_packages;
 mod logging;
+mod media;
+mod nostr_manager;
+mod payments;
+mod relays;
+mod secrets_store;
+mod types;
+mod whitenoise;
 
 #[cfg(test)]
 mod tests;
