@@ -4,7 +4,6 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
-#[tauri::command]
 pub async fn query_message(
     message_id: &str,
     wn: Arc<Whitenoise>,

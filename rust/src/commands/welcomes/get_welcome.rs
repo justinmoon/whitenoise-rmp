@@ -14,7 +14,7 @@ use crate::whitenoise::Whitenoise;
 /// # Returns
 /// * `Ok(Invite)` if the invite was found
 /// * `Err(String)` if there was an error retrieving the invite or it wasn't found
-#[tauri::command]
+
 pub async fn get_welcome(
     event_id: String,
     wn: Arc<Whitenoise>,

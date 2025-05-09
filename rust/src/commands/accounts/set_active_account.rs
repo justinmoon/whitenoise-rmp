@@ -15,7 +15,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(())` - If the active account was set successfully.
 /// * `Err(String)` - An error message if there was an issue setting the active account.
-#[tauri::command]
+
 pub async fn set_active_account(
     hex_pubkey: String,
     wn: Arc<Whitenoise>,
@@ -30,9 +30,9 @@ pub async fn set_active_account(
         .map_err(|e| format!("Error fetching account: {}", e))?;
 
     account.active = true;
-
-    // NOTE: set_active requires a tauri::AppHandle, which is no longer available here.
-    // The following line is commented out for posterity:
-    // account.set_active(runtime::wn(), &app_handle).await.map_err(|e| format!("Error setting active account: {}", e))
+    account
+        .set_active(runtime::wn())
+        .await
+        .map_err(|e| format!("Error setting active account: {}", e));
     Ok(account)
 }

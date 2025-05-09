@@ -19,7 +19,7 @@ use crate::whitenoise::Whitenoise;
 /// Returns error if:
 /// - No active account found
 /// - Database error occurs retrieving groups
-#[tauri::command]
+
 pub async fn get_active_groups(wn: Arc<Whitenoise>) -> Result<Vec<group_types::Group>, String> {
     tracing::debug!(target: "whitenoise::commands::groups::get_groups", "Attempting to acquire nostr_mls lock");
     let nostr_mls_guard = match timeout(Duration::from_secs(5), wn.nostr_mls.lock()).await {

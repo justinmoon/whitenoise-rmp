@@ -3,7 +3,6 @@ use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::sync::Arc;
 
-#[tauri::command]
 pub async fn decrypt_content(
     content: String,
     pubkey: String,

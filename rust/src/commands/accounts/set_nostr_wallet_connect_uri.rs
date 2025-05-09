@@ -14,7 +14,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(())` - If the URI was stored successfully
 /// * `Err(String)` - An error message if there was an issue storing the URI
-#[tauri::command]
+
 pub async fn set_nostr_wallet_connect_uri(
     nostr_wallet_connect_uri: String,
     wn: Arc<Whitenoise>,

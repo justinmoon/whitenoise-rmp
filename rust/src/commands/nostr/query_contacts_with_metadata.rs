@@ -3,7 +3,6 @@ use nostr_sdk::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[tauri::command]
 pub async fn query_contacts_with_metadata(
     wn: Arc<Whitenoise>,
 ) -> Result<HashMap<String, Metadata>, String> {

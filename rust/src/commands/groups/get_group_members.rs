@@ -22,7 +22,7 @@ use crate::whitenoise::Whitenoise;
 /// * If group ID cannot be decoded from hex
 /// * If group cannot be found
 /// * If members cannot be retrieved
-#[tauri::command]
+
 pub async fn get_group_members(
     group_id: &str,
     wn: Arc<Whitenoise>,

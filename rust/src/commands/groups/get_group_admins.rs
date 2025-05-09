@@ -8,7 +8,7 @@ use nostr_mls::prelude::*;
 use crate::whitenoise::Whitenoise;
 
 /// Gets the list of admin members in an MLS group
-#[tauri::command]
+
 pub async fn get_group_admins(
     group_id: &str,
     wn: Arc<Whitenoise>,

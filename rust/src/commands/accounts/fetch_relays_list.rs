@@ -26,7 +26,7 @@ use std::sync::Arc;
 ///   - Failed to get the active account
 ///   - Failed to fetch relays from the network
 ///   - Invalid relay list kind was provided
-#[tauri::command]
+
 pub async fn fetch_relays_list(
     kind: u64,
     pubkey: Option<String>,

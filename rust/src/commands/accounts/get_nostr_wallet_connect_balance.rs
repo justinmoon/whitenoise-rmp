@@ -13,7 +13,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(u64)` - The balance in sats if successful
 /// * `Err(String)` - An error message if there was an issue getting the balance
-#[tauri::command]
+
 pub async fn get_nostr_wallet_connect_balance(wn: Arc<Whitenoise>) -> Result<u64, String> {
     let active_account = Account::get_active(wn.clone())
         .await

@@ -5,7 +5,6 @@ use tokio::time::timeout;
 
 use nostr_mls::prelude::*;
 use nostr_sdk::NostrSigner;
-use tauri::Emitter;
 
 use crate::accounts::Account;
 use crate::commands::nostr::fetch_enriched_contact;
@@ -45,7 +44,7 @@ use crate::whitenoise::Whitenoise;
 /// - MLS group creation fails
 /// - Welcome message sending fails
 /// - Database operations fail
-#[tauri::command]
+
 pub async fn create_group(
     creator_pubkey: String,
     member_pubkeys: Vec<String>,

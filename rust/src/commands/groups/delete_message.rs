@@ -30,7 +30,7 @@ use crate::whitenoise::Whitenoise;
 /// * Message cannot be found in the group
 /// * User is not the owner of the message
 /// * Sending the deletion event fails
-#[tauri::command]
+
 pub async fn delete_message(
     group: group_types::Group,
     message_id: String,

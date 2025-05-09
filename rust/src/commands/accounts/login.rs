@@ -14,7 +14,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(Account)` - The account if login was successful.
 /// * `Err(String)` - An error message if there was an issue logging in.
-#[tauri::command]
+
 pub async fn login(nsec_or_hex_privkey: String, wn: Arc<Whitenoise>) -> Result<Account, String> {
     let keys = Keys::parse(&nsec_or_hex_privkey).map_err(|e| e.to_string())?;
 

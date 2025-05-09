@@ -17,7 +17,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(Account)` - The updated account if successful
 /// * `Err(String)` - An error message if there was an issue updating the account
-#[tauri::command]
+
 pub async fn update_account_onboarding(
     pubkey: String,
     inbox_relays: bool,

@@ -4,9 +4,7 @@ use crate::types::EnrichedContact;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
 use std::sync::Arc;
-use tauri::Emitter;
 
-#[tauri::command]
 pub async fn fetch_enriched_contact(
     pubkey: String,
     update_account: bool,

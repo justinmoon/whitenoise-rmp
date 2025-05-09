@@ -10,7 +10,6 @@ pub mod nostr;
 pub mod payments;
 pub mod welcomes;
 
-#[tauri::command]
 pub async fn delete_all_data(wn: Arc<Whitenoise>) -> Result<(), String> {
     wn.delete_all_data().await.map_err(|e| e.to_string())?;
     Ok(())
@@ -25,7 +24,7 @@ pub async fn delete_all_data(wn: Arc<Whitenoise>) -> Result<(), String> {
 ///
 /// * `true` if running on Android or iOS
 /// * `false` if running on any other platform
-#[tauri::command]
+
 pub fn is_mobile() -> bool {
     #[cfg(any(target_os = "android", target_os = "ios"))]
     return true;
@@ -46,7 +45,7 @@ pub fn is_mobile() -> bool {
 /// - `"android"` when running on Android
 /// - `"ios"` when running on iOS
 /// - `"desktop"` when running on any other platform (Windows, macOS, Linux)
-#[tauri::command]
+
 pub fn is_platform() -> String {
     #[cfg(target_os = "android")]
     return "android".to_string();

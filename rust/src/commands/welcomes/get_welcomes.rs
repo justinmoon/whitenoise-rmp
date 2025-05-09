@@ -6,7 +6,7 @@ use tokio::time::timeout;
 use crate::whitenoise::Whitenoise;
 
 /// Fetches welcomes from the database for the active user
-#[tauri::command]
+
 pub async fn get_welcomes(wn: Arc<Whitenoise>) -> Result<Vec<welcome_types::Welcome>, String> {
     tracing::debug!(target: "whitenoise::commands::welcomes::get_welcomes", "Fetching welcomes");
     tracing::debug!(target: "whitenoise::commands::welcomes::get_welcomes", "Attempting to acquire nostr_mls lock");

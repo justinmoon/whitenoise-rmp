@@ -4,7 +4,6 @@ use nostr_sdk::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[tauri::command]
 pub async fn search_for_enriched_contacts(
     query: String,
     wn: Arc<Whitenoise>,

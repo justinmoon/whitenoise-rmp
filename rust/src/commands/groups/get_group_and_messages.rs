@@ -24,7 +24,7 @@ use crate::whitenoise::Whitenoise;
 /// - Group ID is not valid hex
 /// - Group not found in database
 /// - Error fetching messages
-#[tauri::command]
+
 pub async fn get_group_and_messages(
     group_id: &str,
     wn: Arc<Whitenoise>,

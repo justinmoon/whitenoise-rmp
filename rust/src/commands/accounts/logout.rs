@@ -19,7 +19,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(())` - If the logout was successful
 /// * `Err(String)` - An error message if there was an issue during logout
-#[tauri::command]
+
 pub async fn logout(hex_pubkey: String, wn: Arc<Whitenoise>) -> Result<(), String> {
     let pubkey =
         PublicKey::parse(&hex_pubkey).map_err(|e| format!("Error parsing public key: {}", e))?;

@@ -8,7 +8,7 @@ use nostr_mls_sqlite_storage::NostrMlsSqliteStorage;
 use nostr_sdk::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tauri::Emitter;
+
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -24,9 +24,6 @@ pub enum AccountError {
 
     #[error("Error with secrets store: {0}")]
     SecretsStoreError(#[from] secrets_store::SecretsStoreError),
-
-    #[error("Tauri error: {0}")]
-    TauriError(#[from] tauri::Error),
 
     #[error("No active account found")]
     NoActiveAccount,
@@ -150,12 +147,7 @@ impl Account {
         Ok(account)
     }
     /// Adds an account from an existing keypair
-    pub async fn add_from_keys(
-        keys: &Keys,
-        set_active: bool,
-        wn: Arc<Whitenoise>,
-        app_handle: &tauri::AppHandle,
-    ) -> Result<Self> {
+    pub async fn add_from_keys(keys: &Keys, set_active: bool, wn: Arc<Whitenoise>) -> Result<Self> {
         let pubkey = keys.public_key();
 
         tracing::debug!(target: "whitenoise::accounts", "Adding account for pubkey: {}", pubkey.to_hex());
@@ -252,7 +244,7 @@ impl Account {
 
         // Set active if requested
         if set_active {
-            account.set_active(wn.clone(), app_handle).await?;
+            account.set_active(wn.clone()).await?;
         }
 
         Ok(account)
@@ -357,11 +349,7 @@ impl Account {
     }
 
     /// Sets the active account in the database and updates nostr for the active identity
-    pub async fn set_active(
-        &self,
-        wn: Arc<Whitenoise>,
-        app_handle: &tauri::AppHandle,
-    ) -> Result<Self> {
+    pub async fn set_active(&self, wn: Arc<Whitenoise>) -> Result<Self> {
         tracing::debug!(
             target: "whitenoise::accounts::set_active",
             "Starting set_active for pubkey: {}",
@@ -432,19 +420,13 @@ impl Account {
         );
 
         // If the database operation is successful, update Nostr client
-        wn.nostr
-            .set_nostr_identity(self, wn.clone(), app_handle)
-            .await?;
+        wn.nostr.set_nostr_identity(self, wn.clone()).await?;
 
         tracing::debug!(
             target: "whitenoise::accounts::set_active",
             "Nostr identity set for: {}",
             self.pubkey.to_hex()
         );
-
-        app_handle.emit("nostr_ready", ())?;
-
-        app_handle.emit("account_changed", ())?;
 
         tracing::debug!(
             target: "whitenoise::accounts::set_active",
@@ -590,7 +572,7 @@ impl Account {
     }
 
     /// Removes the account from the database
-    pub async fn remove(&self, wn: Arc<Whitenoise>, app_handle: tauri::AppHandle) -> Result<()> {
+    pub async fn remove(&self, wn: Arc<Whitenoise>) -> Result<()> {
         let hex_pubkey = self.pubkey.to_hex();
 
         let mut txn = wn.database.pool.begin().await?;
@@ -630,11 +612,7 @@ impl Account {
 
         // Update Nostr client & Nostr MLS
         let account = Self::get_active(wn.clone()).await?;
-        wn.nostr
-            .set_nostr_identity(&account, wn.clone(), &app_handle)
-            .await?;
-
-        app_handle.emit("nostr_ready", ())?;
+        wn.nostr.set_nostr_identity(&account, wn.clone()).await?;
 
         // Then update Nostr MLS instance
         {
@@ -660,7 +638,6 @@ impl Account {
             *nostr_mls = Some(NostrMls::new(storage));
         }
 
-        app_handle.emit("account_changed", ())?;
         Ok(())
     }
 

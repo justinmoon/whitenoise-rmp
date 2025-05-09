@@ -28,8 +28,6 @@ pub enum DatabaseError {
     Sqlx(#[from] sqlx::Error),
     #[error("Migrate error: {0}")]
     Migrate(#[from] sqlx::migrate::MigrateError),
-    #[error("Tauri error: {0}")]
-    Tauri(#[from] tauri::Error),
 }
 
 #[derive(Debug, Clone)]

@@ -14,7 +14,7 @@ use std::sync::Arc;
 ///
 /// # Returns
 /// * `Result<HashMap<String, String>, String>` - A map of relay URLs to their statuses, or an error string if something goes wrong
-#[tauri::command]
+
 pub async fn fetch_relays(wn: Arc<Whitenoise>) -> Result<HashMap<String, String>, String> {
     Ok(wn
         .nostr

@@ -7,7 +7,6 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
 
-#[tauri::command]
 pub async fn init_nostr_for_current_user(wn: Arc<Whitenoise>) -> Result<(), String> {
     let current_account = Account::get_active(wn.clone())
         .await

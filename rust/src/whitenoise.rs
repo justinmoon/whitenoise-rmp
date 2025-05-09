@@ -4,7 +4,6 @@ use nostr_mls::NostrMls;
 use nostr_mls_sqlite_storage::NostrMlsSqliteStorage;
 use std::path::PathBuf;
 use std::sync::Arc;
-use tauri::AppHandle;
 use tokio::sync::Mutex;
 
 #[derive(Clone)]

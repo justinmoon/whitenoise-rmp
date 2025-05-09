@@ -29,7 +29,7 @@ pub struct GroupWithRelays {
 /// - Group ID is not valid hex
 /// - Group not found in database
 /// - Database error occurs
-#[tauri::command]
+
 pub async fn get_group(group_id: &str, wn: Arc<Whitenoise>) -> Result<GroupWithRelays, String> {
     let mls_group_id = GroupId::from_slice(
         &hex::decode(group_id).map_err(|e| format!("Error decoding group id: {}", e))?,

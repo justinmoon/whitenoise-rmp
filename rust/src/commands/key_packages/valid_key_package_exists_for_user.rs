@@ -17,7 +17,7 @@ use std::sync::Arc;
 /// - Public key is invalid
 /// - Network error occurs fetching key package
 /// - Key package parsing fails
-#[tauri::command]
+
 pub async fn valid_key_package_exists_for_user(
     pubkey: String,
     wn: Arc<Whitenoise>,

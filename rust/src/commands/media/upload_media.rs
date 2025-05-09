@@ -23,7 +23,7 @@ use std::sync::Arc;
 ///   - No active account is found
 ///   - Account keys cannot be retrieved
 ///   - The upload to Blossom fails
-#[tauri::command]
+
 pub async fn upload_media(file: FileUpload, wn: Arc<Whitenoise>) -> Result<String, String> {
     // Get the active account
     let account = Account::get_active(wn.clone())

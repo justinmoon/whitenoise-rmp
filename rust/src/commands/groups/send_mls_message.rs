@@ -7,14 +7,12 @@ use tokio::time::timeout;
 use lightning_invoice::SignedRawBolt11Invoice;
 use nostr_mls::prelude::*;
 use nostr_sdk::prelude::*;
-use tauri::Emitter;
 
 use super::MessageWithTokens;
 use crate::media::{add_media_file, FileUpload};
 use crate::nostr_manager::parser::parse;
 use crate::whitenoise::Whitenoise;
 
-#[tauri::command]
 pub async fn send_mls_message(
     group: group_types::Group,
     message: String,

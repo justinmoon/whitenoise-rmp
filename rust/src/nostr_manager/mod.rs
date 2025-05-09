@@ -2,7 +2,6 @@ use crate::accounts::Account;
 use crate::media::blossom::BlossomClient;
 use crate::nostr_manager::event_processor::EventProcessor;
 use crate::relays::RelayType;
-use crate::runtime::wn;
 use crate::types::NostrEncryptionMethod;
 use crate::whitenoise::Whitenoise;
 use nostr_sdk::prelude::*;
@@ -171,12 +170,7 @@ impl NostrManager {
         invite_events
     }
 
-    pub async fn set_nostr_identity(
-        &self,
-        account: &Account,
-        wn: Arc<Whitenoise>,
-        app_handle: &tauri::AppHandle,
-    ) -> Result<()> {
+    pub async fn set_nostr_identity(&self, account: &Account, wn: Arc<Whitenoise>) -> Result<()> {
         tracing::debug!(
             target: "whitenoise::nostr_manager::set_nostr_identity",
             "Starting Nostr identity update for {}",
@@ -396,22 +390,20 @@ impl NostrManager {
         // Spawn two tasks in parallel:
         // 1. Setup subscriptions to catch future events
         // 2. Fetch past events
-        let app_handle_clone_subs = app_handle.clone();
         let account_clone_subs = account.clone();
         spawn(async move {
             tracing::debug!(
                 target: "whitenoise::nostr_manager::set_nostr_identity",
                 "Starting subscriptions"
             );
-            let wn_state = app_handle_clone_subs.state::<Whitenoise>();
+            let wn_state = crate::runtime::wn();
 
             let group_ids = account_clone_subs
-                .nostr_group_ids(Arc::new(wn_state.inner().clone()))
+                .nostr_group_ids(wn_state.clone())
                 .await
                 .expect("Couldn't get nostr group ids");
 
             match wn_state
-                .inner()
                 .nostr
                 .setup_subscriptions(account_clone_subs.pubkey, group_ids)
                 .await
@@ -432,7 +424,6 @@ impl NostrManager {
             }
         });
 
-        let app_handle_clone_fetch = app_handle.clone();
         let pubkey = account.pubkey;
         let last_synced = account.last_synced;
         spawn(async move {
@@ -441,17 +432,17 @@ impl NostrManager {
                 "Starting fetch for {}",
                 pubkey
             );
-            let wn_state = app_handle_clone_fetch.state::<Whitenoise>();
+            let wn_state = crate::runtime::wn();
+            let wn_clone = wn_state.clone();
 
-            let group_ids = Account::find_by_pubkey(&pubkey, Arc::new(wn_state.inner().clone()))
+            let group_ids = Account::find_by_pubkey(&pubkey, wn_clone.clone())
                 .await
                 .expect("Couldn't get account")
-                .nostr_group_ids(Arc::new(wn_state.inner().clone()))
+                .nostr_group_ids(wn_clone.clone())
                 .await
                 .expect("Couldn't get nostr group ids");
 
-            match &wn_state
-                .inner()
+            match &wn_clone
                 .nostr
                 .fetch_for_user(pubkey, last_synced, group_ids)
                 .await
@@ -464,10 +455,10 @@ impl NostrManager {
                     );
                     // Update last_synced through a new database query
                     if let Ok(mut account) =
-                        Account::find_by_pubkey(&pubkey, Arc::new(wn_state.inner().clone())).await
+                        Account::find_by_pubkey(&pubkey, wn_clone.clone()).await
                     {
                         account.last_synced = Timestamp::now();
-                        if let Err(e) = account.save(Arc::new(wn_state.inner().clone())).await {
+                        if let Err(e) = account.save(wn_clone.clone()).await {
                             tracing::error!(
                                 target: "whitenoise::nostr_manager::set_nostr_identity",
                                 "Error updating last_synced: {}",

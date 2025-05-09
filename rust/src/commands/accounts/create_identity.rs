@@ -14,7 +14,7 @@ use std::sync::Arc;
 ///
 /// * `Ok(Account)` - The newly created account.
 /// * `Err(String)` - An error message if there was an issue creating the identity.
-#[tauri::command]
+
 pub async fn create_identity(
     wn: Arc<Whitenoise>,
     // app_handle: tauri::AppHandle, // removed

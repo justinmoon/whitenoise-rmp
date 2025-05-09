@@ -24,7 +24,6 @@ impl From<PaymentError> for CommandError {
     }
 }
 
-#[tauri::command]
 pub async fn pay_invoice(
     group: group_types::Group,
     tags: Option<Vec<Tag>>,

@@ -1,7 +1,7 @@
 use nostr_mls::prelude::*;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::Emitter;
+
 use tokio::time::timeout;
 
 use crate::whitenoise::Whitenoise;
@@ -19,7 +19,7 @@ use crate::whitenoise::Whitenoise;
 ///
 /// # Events Emitted
 /// * `welcome_accepted` - Emitted with the updated welcome after it is accepted
-#[tauri::command]
+
 pub async fn accept_welcome(welcome_event_id: String, wn: Arc<Whitenoise>) -> Result<(), String> {
     let welcome_event_id = EventId::parse(&welcome_event_id).map_err(|e| e.to_string())?;
 
