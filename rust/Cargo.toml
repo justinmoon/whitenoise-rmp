@@ -61,14 +61,6 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1.16.0", features = ["v4"] }
 thiserror = "2.0.12"
 
-tauri = { version = "2.5", features = [] }
-tauri-plugin-clipboard-manager = "2.2.2"
-tauri-plugin-dialog = "2.2"
-tauri-plugin-fs = "2.2"
-tauri-plugin-notification = "2.2.2"
-tauri-plugin-shell = "2.2"
-
-
 [target.'cfg(any(target_os = "ios", target_os = "macos"))'.dependencies]
 nostr-sdk = { version = "0.41", git = "https://github.com/rust-nostr/nostr", rev = "5a2e66874c6e6cb0f5b8bcb50c1d37aecd7a5d90", features = [
     "ndb",   # Use NDB for macOS and iOS
