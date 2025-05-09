@@ -23,7 +23,6 @@ const MAX_RETRIES: u8 = 3;
 /// * `group_id` - The ID of the group for which the file is being uploaded
 /// * `file` - The file upload details containing the file data and metadata
 /// * `wn` - The Whitenoise application state containing necessary configurations
-/// * `app_handle` - The Tauri application handle for emitting events
 ///
 /// # Returns
 ///

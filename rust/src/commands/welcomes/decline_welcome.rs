@@ -11,7 +11,6 @@ use crate::whitenoise::Whitenoise;
 /// # Arguments
 /// * `welcome` - The welcome to decline
 /// * `wn` - The Whitenoise state
-/// * `app_handle` - The Tauri app handle
 ///
 /// # Returns
 /// * `Ok(())` if the welcome was successfully declined

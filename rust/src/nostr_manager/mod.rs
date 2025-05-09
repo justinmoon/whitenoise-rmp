@@ -8,7 +8,6 @@ use nostr_sdk::prelude::*;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::Manager;
 use thiserror::Error;
 use tokio::{spawn, sync::Mutex};
 
@@ -33,8 +32,6 @@ pub enum NostrManagerError {
     Signer(#[from] nostr_sdk::signer::SignerError),
     #[error("Error with secrets store: {0}")]
     SecretsStoreError(String),
-    #[error("Tauri error: {0}")]
-    TauriError(#[from] tauri::Error),
     #[error("Failed to queue event: {0}")]
     FailedToQueueEvent(String),
     #[error("Failed to shutdown event processor: {0}")]

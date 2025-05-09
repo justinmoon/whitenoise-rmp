@@ -20,7 +20,6 @@ use crate::whitenoise::Whitenoise;
 /// * `group_name` - Name of the group
 /// * `description` - Description of the group
 /// * `wn` - Whitenoise state
-/// * `app_handle` - Tauri app handle
 ///
 /// # Returns
 /// * `Ok(Group)` - The newly created group

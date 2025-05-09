@@ -17,7 +17,6 @@ use crate::whitenoise::Whitenoise;
 /// * `group` - The MLS group containing the message
 /// * `message_id` - ID of the message to delete (hex-encoded string)
 /// * `wn` - Whitenoise state handle
-/// * `app_handle` - Tauri app handle
 ///
 /// # Returns
 /// * `Ok(Message)` - The deletion event if successful

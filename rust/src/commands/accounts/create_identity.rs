@@ -15,10 +15,7 @@ use std::sync::Arc;
 /// * `Ok(Account)` - The newly created account.
 /// * `Err(String)` - An error message if there was an issue creating the identity.
 
-pub async fn create_identity(
-    wn: Arc<Whitenoise>,
-    // app_handle: tauri::AppHandle, // removed
-) -> Result<Account, String> {
+pub async fn create_identity(wn: Arc<Whitenoise>) -> Result<Account, String> {
     // Create a new account with a generated keypair
     let initial_account = Account::new(wn.clone())
         .await

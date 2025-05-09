@@ -11,7 +11,6 @@ use crate::whitenoise::Whitenoise;
 /// # Arguments
 /// * `welcome_event_id` - The event ID of the welcome to accept
 /// * `wn` - The Whitenoise state
-/// * `app_handle` - The Tauri app handle
 ///
 /// # Returns
 /// * `Ok(())` if the welcome was successfully accepted
