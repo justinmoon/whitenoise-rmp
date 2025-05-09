@@ -14,6 +14,7 @@ pub struct Whitenoise {
     pub nostr_mls: Arc<Mutex<Option<NostrMls<NostrMlsSqliteStorage>>>>,
     pub data_dir: PathBuf,
     pub logs_dir: PathBuf,
+    // update_receiver: Arc<Receiver<ModelUpdate>>,
 }
 
 impl Whitenoise {
